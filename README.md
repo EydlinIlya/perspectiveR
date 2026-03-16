@@ -5,8 +5,14 @@ R htmlwidgets binding for the [FINOS Perspective](https://perspective.finos.org/
 ## Installation
 
 ```r
-# Install from source (requires the built JS bundle)
-devtools::install_local(".")
+# Install from GitHub
+remotes::install_github("EydlinIlya/peRspective")
+
+# Or using pak
+pak::pak("EydlinIlya/peRspective")
+
+# Or using devtools
+devtools::install_github("EydlinIlya/peRspective")
 ```
 
 ## Quick Start

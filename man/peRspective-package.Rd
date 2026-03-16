@@ -11,13 +11,13 @@ An 'htmlwidgets' binding for the 'FINOS Perspective' \url{https://perspective.fi
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/peRspective/peRspective}
-  \item Report bugs at \url{https://github.com/peRspective/peRspective/issues}
+  \item \url{https://github.com/EydlinIlya/peRspective}
+  \item Report bugs at \url{https://github.com/EydlinIlya/peRspective/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: peRspective Authors \email{perspective@example.com}
+\strong{Maintainer}: Eli Eydlin \email{ilyabeydlin@gmail.com}
 
 }
 \keyword{internal}
