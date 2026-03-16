@@ -10,14 +10,6 @@ ui <- fluidPage(
         choices = c("mtcars", "iris", "airquality"),
         selected = "mtcars"
       ),
-      selectInput("plugin", "Chart Type:",
-        choices = c(
-          "Datagrid", "Y Bar", "X Bar", "Y Line",
-          "Y Area", "Y Scatter", "XY Scatter",
-          "Treemap", "Sunburst", "Heatmap"
-        ),
-        selected = "Datagrid"
-      ),
       selectInput("theme", "Theme:",
         choices = c(
           "Pro Light", "Pro Dark", "Monokai",
@@ -29,7 +21,7 @@ ui <- fluidPage(
       hr(),
       h4("Streaming Data Controls"),
       actionButton("add_rows", "Add 5 Random Rows", class = "btn-success"),
-      actionButton("replace_data", "Replace With Fresh Data", class = "btn-warning"),
+      actionButton("replace_data", "Replace With Subset", class = "btn-warning"),
       actionButton("clear_data", "Clear All Data", class = "btn-danger"),
       actionButton("reset_view", "Reset View"),
       hr(),
@@ -56,7 +48,6 @@ server <- function(input, output, session) {
 
   output$viewer <- renderPerspective({
     perspective(get_data(),
-      plugin = input$plugin,
       theme = input$theme,
       settings = TRUE
     )

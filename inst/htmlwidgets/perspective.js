@@ -216,6 +216,7 @@ if (HTMLWidgets.shinyMode) {
 
       case "clear":
         await table.clear();
+        await viewer.draw();
         break;
 
       case "restore":
@@ -226,6 +227,7 @@ if (HTMLWidgets.shinyMode) {
 
       case "reset":
         await viewer.reset();
+        await viewer.draw();
         break;
     }
   });
