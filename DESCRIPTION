@@ -1,0 +1,36 @@
+Package: peRspective
+Type: Package
+Title: Interactive Pivot Tables and Visualizations with 'Perspective'
+Version: 0.1.0
+Authors@R: c(
+    person("peRspective", "Authors", email = "perspective@example.com",
+           role = c("aut", "cre")))
+Author: peRspective Authors [aut, cre]
+Maintainer: peRspective Authors <perspective@example.com>
+Description: An 'htmlwidgets' binding for the 'FINOS Perspective'
+    <https://perspective.finos.org/> library, a high-performance
+    WebAssembly-powered data visualization engine. Provides interactive pivot
+    tables, cross-tabulations, and 12+ chart types (bar, line, scatter,
+    heatmap, treemap, sunburst, and more) that run entirely in the browser.
+    Supports self-service analytics with drag-and-drop column selection,
+    group-by/split-by pivoting, filtering, sorting, aggregation, and computed
+    expressions. Works in 'RStudio' Viewer, 'R Markdown', 'Quarto', and
+    'Shiny' with streaming data updates via proxy interface.
+License: Apache License (>= 2) | file LICENSE
+URL: https://github.com/peRspective/peRspective
+BugReports: https://github.com/peRspective/peRspective/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports:
+    htmlwidgets (>= 1.6.0),
+    htmltools,
+    jsonlite
+Suggests:
+    arrow,
+    shiny (>= 1.1.0),
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Config/testthat/edition: 3

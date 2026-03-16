@@ -1,0 +1,15 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Node
+tools/node_modules/
+tools/package-lock.json
+
+# Build artifacts that are regenerated
+inst/htmlwidgets/lib/perspective-3.8.0/perspective-all.mjs
+
+# OS files
+.DS_Store
+Thumbs.db

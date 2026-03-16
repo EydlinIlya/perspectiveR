@@ -1,0 +1,17 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^README\.Rmd$
+^tools$
+^tools/.*$
+^node_modules$
+^\.github$
+^\.github/.*$
+^\.claude$
+^\.claude/.*$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.lintr$
+^\.editorconfig$
+^\.gitignore$

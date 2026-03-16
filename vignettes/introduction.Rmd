@@ -1,0 +1,136 @@
+---
+title: "Introduction to peRspective"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to peRspective}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Overview
+
+peRspective provides an R interface to the [FINOS Perspective](https://perspective.finos.org/) library, a high-performance WebAssembly-powered data visualization engine. It offers interactive pivot tables, cross-tabulations, and 12+ chart types that run entirely in the browser.
+
+## Quick Start
+
+```{r setup}
+library(peRspective)
+```
+
+The simplest usage is to pass a data frame directly:
+
+```{r basic, eval=FALSE}
+perspective(mtcars)
+```
+
+This opens a fully interactive viewer with a settings panel where you can:
+
+- Drag columns in/out of the view
+- Switch between chart types (datagrid, bar, line, scatter, heatmap, etc.)
+- Add group-by (row pivot) and split-by (column pivot) dimensions
+- Create filters, sort, and change aggregations
+- Write computed expressions
+
+## Configuration
+
+You can set an initial configuration programmatically:
+```{r config, eval=FALSE}
+perspective(mtcars,
+  group_by = "cyl",
+  columns = c("mpg", "hp", "wt"),
+  plugin = "Y Bar",
+  theme = "Pro Dark"
+)
+```
+
+Users can still modify the view interactively even after initial configuration.
+
+### Available Chart Types
+
+- `"Datagrid"` — interactive data grid (default)
+- `"Y Bar"` / `"X Bar"` — vertical / horizontal bar charts
+- `"Y Line"` — line chart
+- `"Y Area"` — area chart
+- `"Y Scatter"` / `"XY Scatter"` — scatter plots
+- `"Treemap"` — treemap
+- `"Sunburst"` — sunburst chart
+- `"Heatmap"` — heatmap
+
+### Filtering and Sorting
+
+```{r filter-sort, eval=FALSE}
+perspective(iris,
+  filter = list(c("Species", "==", "setosa")),
+  sort = list(c("Sepal.Length", "desc"))
+)
+```
+
+### Computed Expressions
+
+```{r expressions, eval=FALSE}
+perspective(mtcars,
+  expressions = c('"hp" / "wt"'),
+  columns = c("mpg", "hp", "wt", '"hp" / "wt"')
+)
+```
+
+## Arrow IPC for Large Datasets
+
+For datasets with 100k+ rows, use Arrow IPC serialization for better performance:
+
+```{r arrow, eval=FALSE}
+# Requires the arrow package
+big_data <- data.frame(
+  x = rnorm(100000),
+  y = rnorm(100000),
+  group = sample(letters, 100000, replace = TRUE)
+)
+perspective(big_data, use_arrow = TRUE)
+```
+
+## Shiny Integration
+
+peRspective includes full Shiny support with a proxy interface for streaming updates:
+
+```{r shiny, eval=FALSE}
+library(shiny)
+
+ui <- fluidPage(
+  perspectiveOutput("viewer", height = "600px"),
+  actionButton("add", "Add Data")
+)
+
+server <- function(input, output, session) {
+  output$viewer <- renderPerspective({
+    perspective(mtcars, plugin = "Y Bar", group_by = "cyl")
+  })
+
+  observeEvent(input$add, {
+    proxy <- perspectiveProxy(session, "viewer")
+    new_data <- mtcars[sample(nrow(mtcars), 5), ]
+    psp_update(proxy, new_data)
+  })
+
+  # Capture user's interactive config changes
+  observeEvent(input$viewer_config, {
+    message("User changed config: ", str(input$viewer_config))
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### Proxy Functions
+
+- `psp_update(proxy, data)` — append new rows
+- `psp_replace(proxy, data)` — replace all data
+- `psp_clear(proxy)` — clear all rows
+- `psp_restore(proxy, config)` — apply a config
+- `psp_reset(proxy)` — reset to defaults
