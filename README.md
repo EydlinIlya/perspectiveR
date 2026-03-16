@@ -43,13 +43,25 @@ perspective(iris,
 - **Arrow IPC support**: Optional `arrow` package integration for efficient serialization of large datasets
 - **Works everywhere**: RStudio Viewer, R Markdown, Quarto, and Shiny
 
-## Shiny Usage
+## Shiny Demo
+
+A full interactive demo is bundled with the package:
+
+```r
+library(peRspective)
+run_example("shiny-basic")
+```
+
+This launches a Shiny app where you can switch datasets, chart types, and themes, stream new rows, replace/clear data, and see live config changes from the viewer.
+
+### Shiny Usage
 
 ```r
 library(shiny)
 library(peRspective)
 
 ui <- fluidPage(
+  actionButton("add", "Add Rows"),
   perspectiveOutput("viewer", height = "600px")
 )
 
@@ -58,10 +70,11 @@ server <- function(input, output, session) {
     perspective(mtcars, plugin = "Y Bar", group_by = "cyl")
   })
 
-  # Stream new data
+  # Stream new rows into the existing table
   observeEvent(input$add, {
     proxy <- perspectiveProxy(session, "viewer")
-    psp_update(proxy, new_data)
+    new_rows <- mtcars[sample(nrow(mtcars), 5), ]
+    psp_update(proxy, new_rows)
   })
 
   # Capture user's interactive config changes
@@ -69,7 +82,17 @@ server <- function(input, output, session) {
     saved_config <- input$viewer_config
   })
 }
+
+shinyApp(ui, server)
 ```
+
+### Proxy Functions
+
+- `psp_update(proxy, data)` — append new rows
+- `psp_replace(proxy, data)` — replace all data
+- `psp_clear(proxy)` — clear all rows
+- `psp_restore(proxy, config)` — apply a saved config
+- `psp_reset(proxy)` — reset viewer to defaults
 
 ## Building the JS Bundle
 
