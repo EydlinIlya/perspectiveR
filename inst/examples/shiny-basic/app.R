@@ -2,11 +2,12 @@ library(shiny)
 library(peRspective)
 
 ui <- fluidPage(
-  titlePanel("peRspective Shiny Demo"),
+  titlePanel("peRspective Demo"),
   sidebarLayout(
     sidebarPanel(
+      width = 3,
       selectInput("dataset", "Dataset:",
-        choices = c("mtcars", "iris", "diamonds"),
+        choices = c("mtcars", "iris", "airquality"),
         selected = "mtcars"
       ),
       selectInput("plugin", "Chart Type:",
@@ -20,79 +21,77 @@ ui <- fluidPage(
       selectInput("theme", "Theme:",
         choices = c(
           "Pro Light", "Pro Dark", "Monokai",
-          "Solarized Light", "Solarized Dark", "Vaporwave"
+          "Solarized Light", "Solarized Dark",
+          "Vaporwave"
         ),
         selected = "Pro Light"
       ),
-      actionButton("update_btn", "Add Random Rows"),
-      actionButton("clear_btn", "Clear Data"),
-      actionButton("reset_btn", "Reset View"),
       hr(),
-      h4("Current Config (from viewer):"),
-      verbatimTextOutput("config_output")
+      h4("Streaming Data Controls"),
+      actionButton("add_rows", "Add 5 Random Rows", class = "btn-success"),
+      actionButton("replace_data", "Replace With Fresh Data", class = "btn-warning"),
+      actionButton("clear_data", "Clear All Data", class = "btn-danger"),
+      actionButton("reset_view", "Reset View"),
+      hr(),
+      h4("Viewer Config (live)"),
+      helpText("Interact with the viewer (change columns, filters, etc.)
+               and the config will appear here:"),
+      verbatimTextOutput("config_display")
     ),
     mainPanel(
-      perspectiveOutput("viewer", height = "600px")
+      width = 9,
+      perspectiveOutput("viewer", height = "700px")
     )
   )
 )
 
 server <- function(input, output, session) {
-  # Reactive dataset
-  current_data <- reactiveVal(mtcars)
-
-  observeEvent(input$dataset, {
-    data <- switch(input$dataset,
+  get_data <- function() {
+    switch(input$dataset,
       "mtcars" = mtcars,
       "iris" = iris,
-      "diamonds" = {
-        if (requireNamespace("ggplot2", quietly = TRUE)) {
-          ggplot2::diamonds[1:1000, ]
-        } else {
-          mtcars
-        }
-      }
+      "airquality" = airquality
     )
-    current_data(data)
-  })
+  }
 
-  # Render the perspective widget
   output$viewer <- renderPerspective({
-    perspective(current_data(),
+    perspective(get_data(),
       plugin = input$plugin,
       theme = input$theme,
       settings = TRUE
     )
   })
 
-  # Proxy operations
-  observeEvent(input$update_btn, {
+  observeEvent(input$add_rows, {
     proxy <- perspectiveProxy(session, "viewer")
-    data <- current_data()
-    # Add some random rows based on existing data
-    n <- min(5, nrow(data))
-    new_rows <- data[sample(nrow(data), n, replace = TRUE), ]
-    # Add some noise to numeric columns
+    data <- get_data()
+    new_rows <- data[sample(nrow(data), 5, replace = TRUE), ]
     for (col in names(new_rows)) {
       if (is.numeric(new_rows[[col]])) {
-        new_rows[[col]] <- new_rows[[col]] * runif(n, 0.8, 1.2)
+        new_rows[[col]] <- round(new_rows[[col]] * runif(5, 0.8, 1.2), 2)
       }
     }
     psp_update(proxy, new_rows)
   })
 
-  observeEvent(input$clear_btn, {
+  observeEvent(input$replace_data, {
+    proxy <- perspectiveProxy(session, "viewer")
+    data <- get_data()
+    subset_data <- data[sample(nrow(data), min(15, nrow(data))), ]
+    psp_replace(proxy, subset_data)
+  })
+
+  observeEvent(input$clear_data, {
     proxy <- perspectiveProxy(session, "viewer")
     psp_clear(proxy)
   })
 
-  observeEvent(input$reset_btn, {
+  observeEvent(input$reset_view, {
     proxy <- perspectiveProxy(session, "viewer")
     psp_reset(proxy)
   })
 
-  # Display config changes from viewer
-  output$config_output <- renderPrint({
+  output$config_display <- renderPrint({
     cfg <- input$viewer_config
     if (is.null(cfg)) {
       cat("(interact with the viewer to see config)")
