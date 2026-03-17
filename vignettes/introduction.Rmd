@@ -136,9 +136,40 @@ shinyApp(ui, server)
 - `psp_restore(proxy, config)` — apply a config
 - `psp_reset(proxy)` — reset to defaults
 - `psp_remove(proxy, keys)` — remove rows by primary key (indexed tables only)
-- `psp_export(proxy, format)` — export data as JSON, CSV, columns, or Arrow
+- `psp_export(proxy, format)` — export data as JSON, CSV, columns, or Arrow (supports windowed export)
 - `psp_save(proxy)` — retrieve current viewer state
 - `psp_on_update(proxy, enable)` — subscribe/unsubscribe to data change events
+- `psp_schema(proxy)` — get table schema (column names and types)
+- `psp_size(proxy)` — get table row count
+- `psp_columns(proxy)` — get table column names
+- `psp_validate_expressions(proxy, expressions)` — validate expression strings
+
+## Filter Operator
+
+When using multiple filters, you can control how they are combined using `filter_op`:
+
+```{r filter-op, eval=FALSE}
+# Match rows where Species is "setosa" OR Sepal.Length > 6
+perspective(iris,
+  filter = list(
+    c("Species", "==", "setosa"),
+    c("Sepal.Length", ">", "6")
+  ),
+  filter_op = "or"
+)
+```
+
+The default is `"and"` (all filters must match). Set `filter_op = "or"` to match rows that satisfy any filter.
+
+## Rolling Window Tables
+
+Use the `limit` parameter to create a rolling-window table that automatically drops the oldest rows when new rows are added beyond the limit:
+```{r limit, eval=FALSE}
+# Keep only the last 100 rows
+perspective(streaming_data, limit = 100)
+```
+
+Note that `limit` and `index` are mutually exclusive.
 
 ## Indexed Tables
 
@@ -204,6 +235,64 @@ observeEvent(input$viewer_update, {
 
 # To unsubscribe:
 psp_on_update(proxy, enable = FALSE)
+```
+
+## Table Metadata
+
+Query the table for its schema, size, or column names:
+
+```{r metadata, eval=FALSE}
+proxy <- perspectiveProxy(session, "viewer")
+
+# Get column types
+psp_schema(proxy)
+observeEvent(input$viewer_schema, {
+  str(input$viewer_schema)  # list(col1 = "float", col2 = "string", ...)
+})
+
+# Get row count
+psp_size(proxy)
+observeEvent(input$viewer_size, {
+  message("Table has ", input$viewer_size, " rows")
+})
+
+# Get column names
+psp_columns(proxy)
+observeEvent(input$viewer_columns, {
+  message("Columns: ", paste(input$viewer_columns, collapse = ", "))
+})
+```
+
+## Windowed Export
+
+Export a subset of rows/columns by specifying a window:
+
+```{r windowed-export, eval=FALSE}
+proxy <- perspectiveProxy(session, "viewer")
+
+# Export only the first 50 rows
+psp_export(proxy, format = "json", start_row = 0, end_row = 50)
+
+# Export rows 100-200, columns 0-3
+psp_export(proxy, format = "csv",
+  start_row = 100, end_row = 200,
+  start_col = 0, end_col = 3
+)
+```
+
+## Validating Expressions
+
+Check whether expression strings are valid before applying them:
+
+```{r validate-expr, eval=FALSE}
+proxy <- perspectiveProxy(session, "viewer")
+psp_validate_expressions(proxy, c('"hp" / "wt"', '"invalid_col" + 1'))
+
+observeEvent(input$viewer_validate_expressions, {
+  result <- input$viewer_validate_expressions
+  # Contains validation info for each expression
+  str(result)
+})
 ```
 
 ## Themes

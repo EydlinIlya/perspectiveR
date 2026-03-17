@@ -39,23 +39,28 @@ perspective(iris,
 - **12+ visualization types**: Datagrid, bar, line, area, scatter, heatmap, treemap, sunburst, and more
 - **Self-service interactive UI**: Drag-and-drop columns, switch chart types, add filters/sorts/pivots, create computed expressions
 - **High performance**: WebAssembly-powered compute engine runs entirely in the browser
-- **Shiny integration**: Output/render bindings plus proxy interface for streaming data updates, indexed/keyed tables, data export, and state save/restore
+- **Shiny integration**: Output/render bindings plus proxy interface for streaming data updates, indexed/keyed tables, rolling-window tables (`limit`), data export, table metadata queries, and state save/restore
+- **Filter operator**: Combine multiple filters with `filter_op = "and"` or `filter_op = "or"`
 - **Arrow IPC support**: Optional `arrow` package integration for efficient serialization of large datasets
 - **Works everywhere**: RStudio Viewer, R Markdown, Quarto, and Shiny
 
-## Shiny Demo
+## Shiny Demos
 
-A streaming stock market demo is bundled with the package:
+Four interactive demos are bundled with the package:
 
 ```r
 library(peRspective)
+run_example()             # list all available demos
 run_example("shiny-basic")
+run_example("crud-table")
+run_example("analytics-dashboard")
+run_example("data-explorer")
 ```
 
-This launches a Shiny app that replays European stock market data (DAX, SMI,
-CAC, FTSE 1991-1998) as an X/Y Line chart, streaming one row per second with
-a 100-row sliding window. Select a year and drag additional indices from the
-column list to compare.
+- **shiny-basic** — Streaming stock market line chart (DAX, SMI, CAC, FTSE 1991-1998) with a 100-row sliding window.
+- **crud-table** — Editable indexed CRUD table with click events, add/update/delete rows by key, data export, and an update activity log.
+- **analytics-dashboard** — Multi-view analytics on `ChickWeight` with chart type switching, 9 themes, group-by/split-by pivoting, presets, state save/restore, and selection events.
+- **data-explorer** — Table introspection on `airquality` with expressions (computed columns), filter_op (and/or), rolling-window streaming, windowed export, and metadata queries (schema/size/columns).
 
 ### Shiny Usage
 
@@ -92,9 +97,13 @@ shinyApp(ui, server)
 - `psp_restore(proxy, config)` — apply a saved config
 - `psp_reset(proxy)` — reset viewer to defaults
 - `psp_remove(proxy, keys)` — remove rows by primary key (indexed tables)
-- `psp_export(proxy, format)` — export data (JSON, CSV, columns, or Arrow)
+- `psp_export(proxy, format)` — export data (JSON, CSV, columns, or Arrow); supports windowed export with `start_row`/`end_row`/`start_col`/`end_col`
 - `psp_save(proxy)` — retrieve current viewer state
 - `psp_on_update(proxy, enable)` — subscribe to data change events
+- `psp_schema(proxy)` — get table schema (column names and types)
+- `psp_size(proxy)` — get table row count
+- `psp_columns(proxy)` — get table column names
+- `psp_validate_expressions(proxy, expressions)` — validate expression strings
 
 ## Building the JS Bundle
 

@@ -41,3 +41,40 @@ test_that("psp_save validates proxy", {
 test_that("psp_on_update validates proxy", {
   expect_error(psp_on_update("not_a_proxy"), "perspectiveProxy")
 })
+
+# ---- windowed export tests ----
+
+test_that("psp_export validates window params", {
+  proxy <- perspectiveProxy(list(), "test_id")
+  expect_error(psp_export(proxy, start_row = "a"), "single numeric value")
+  expect_error(psp_export(proxy, end_row = c(1, 2)), "single numeric value")
+  expect_error(psp_export(proxy, start_col = NA), "single numeric value")
+  expect_error(psp_export(proxy, end_col = TRUE), "single numeric value")
+})
+
+# ---- table metadata proxy tests ----
+
+test_that("psp_schema validates proxy", {
+  expect_error(psp_schema("not_a_proxy"), "perspectiveProxy")
+})
+
+test_that("psp_size validates proxy", {
+  expect_error(psp_size("not_a_proxy"), "perspectiveProxy")
+})
+
+test_that("psp_columns validates proxy", {
+  expect_error(psp_columns("not_a_proxy"), "perspectiveProxy")
+})
+
+# ---- expression validation tests ----
+
+test_that("psp_validate_expressions validates proxy", {
+  expect_error(psp_validate_expressions("not_a_proxy", "x"), "perspectiveProxy")
+})
+
+test_that("psp_validate_expressions requires non-empty character vector", {
+  proxy <- perspectiveProxy(list(), "test_id")
+  expect_error(psp_validate_expressions(proxy, c()), "non-empty character")
+  expect_error(psp_validate_expressions(proxy, 123), "non-empty character")
+  expect_error(psp_validate_expressions(proxy), "non-empty character")
+})

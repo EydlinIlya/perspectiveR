@@ -19,6 +19,9 @@
 #'   \code{"begins with"}, \code{"contains"}, \code{"ends with"}, \code{"in"}, \code{"not in"},
 #'   \code{"is null"}, \code{"is not null"}), and a value.
 #'   For example: \code{list(c("cyl", "==", "6"))}.
+#' @param filter_op Character string controlling how multiple filters are
+#'   combined: \code{"and"} (default) or \code{"or"}. If \code{NULL}, the
+#'   Perspective default (\code{"and"}) is used.
 #' @param expressions Character vector of Perspective expression strings for
 #'   computed columns. For example: \code{c('"Profit" / "Sales"')}.
 #' @param aggregates A named list mapping column names to aggregate functions.
@@ -45,6 +48,10 @@
 #'   updated instead of appended) and \code{psp_remove()} can delete rows by
 #'   key. Must be the name of a column present in \code{data}. Default
 #'   \code{NULL} (no index).
+#' @param limit Single positive integer specifying the maximum number of rows
+#'   the table will hold. When new rows are added beyond this limit, the oldest
+#'   rows are removed (rolling window). Mutually exclusive with \code{index}.
+#'   Default \code{NULL} (no limit).
 #' @param use_arrow Logical; if \code{TRUE}, serialize data using Arrow IPC
 #'   format (base64-encoded) for better performance with large datasets.
 #'   Requires the \code{arrow} package. Default \code{FALSE}.
@@ -68,6 +75,14 @@
 #'     calling \code{\link{psp_export}}.}
 #'   \item{\code{input$<outputId>_state}}{Contains saved viewer state after
 #'     calling \code{\link{psp_save}}.}
+#'   \item{\code{input$<outputId>_schema}}{Contains the table schema after
+#'     calling \code{\link{psp_schema}}.}
+#'   \item{\code{input$<outputId>_size}}{Contains the table row count after
+#'     calling \code{\link{psp_size}}.}
+#'   \item{\code{input$<outputId>_columns}}{Contains the table column names
+#'     after calling \code{\link{psp_columns}}.}
+#'   \item{\code{input$<outputId>_validate_expressions}}{Contains expression
+#'     validation results after calling \code{\link{psp_validate_expressions}}.}
 #' }
 #'
 #' @return An htmlwidgets object that can be printed, included in R Markdown,
@@ -96,6 +111,7 @@ perspective <- function(data,
                         split_by = NULL,
                         sort = NULL,
                         filter = NULL,
+                        filter_op = NULL,
                         expressions = NULL,
                         aggregates = NULL,
                         plugin = NULL,
@@ -105,6 +121,7 @@ perspective <- function(data,
                         title = NULL,
                         editable = FALSE,
                         index = NULL,
+                        limit = NULL,
                         use_arrow = FALSE,
                         width = NULL,
                         height = NULL,
@@ -118,6 +135,14 @@ perspective <- function(data,
     data <- as.data.frame(data)
   }
 
+  # Validate filter_op
+  if (!is.null(filter_op)) {
+    if (!is.character(filter_op) || length(filter_op) != 1L ||
+        !filter_op %in% c("and", "or")) {
+      stop('`filter_op` must be "and" or "or".', call. = FALSE)
+    }
+  }
+
   # Validate index
   if (!is.null(index)) {
     if (!is.character(index) || length(index) != 1L) {
@@ -126,6 +151,20 @@ perspective <- function(data,
     if (!index %in% names(data)) {
       stop(sprintf("`index` column '%s' not found in `data`.", index), call. = FALSE)
     }
+  }
+
+  # Validate limit
+  if (!is.null(limit)) {
+    if (length(limit) != 1L || is.na(limit) || !is.numeric(limit) ||
+        limit != as.integer(limit) || limit <= 0L) {
+      stop("`limit` must be a single positive integer.", call. = FALSE)
+    }
+    limit <- as.integer(limit)
+  }
+
+  # index and limit are mutually exclusive
+  if (!is.null(index) && !is.null(limit)) {
+    stop("`index` and `limit` cannot both be set.", call. = FALSE)
   }
 
   # Serialize data
@@ -142,6 +181,7 @@ perspective <- function(data,
   if (!is.null(split_by)) config$split_by <- as.list(split_by)
   if (!is.null(sort)) config$sort <- sort
   if (!is.null(filter)) config$filter <- filter
+  if (!is.null(filter_op)) config$filter_op <- filter_op
   if (!is.null(expressions)) config$expressions <- .build_expressions(expressions)
   if (!is.null(aggregates)) config$aggregates <- aggregates
   if (!is.null(plugin)) config$plugin <- plugin
@@ -159,6 +199,7 @@ perspective <- function(data,
     theme = theme
   )
   if (!is.null(index)) x$index <- index
+  if (!is.null(limit)) x$limit <- limit
 
   # Create widget
   htmlwidgets::createWidget(

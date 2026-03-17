@@ -1,7 +1,7 @@
 Package: peRspective
 Type: Package
 Title: Interactive Pivot Tables and Visualizations with 'Perspective'
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: c(
     person("Eli", "Eydlin", email = "ilyabeydlin@gmail.com",
            role = c("aut", "cre")))

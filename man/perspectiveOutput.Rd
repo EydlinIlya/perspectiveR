@@ -32,6 +32,14 @@ ID you supply):
 \code{\link{psp_export}}).}
 \item{\code{input$<outputId>_state}}{Saved viewer state (after
 \code{\link{psp_save}}).}
+\item{\code{input$<outputId>_schema}}{Table schema (after
+\code{\link{psp_schema}}).}
+\item{\code{input$<outputId>_size}}{Table row count (after
+\code{\link{psp_size}}).}
+\item{\code{input$<outputId>_columns}}{Table column names (after
+\code{\link{psp_columns}}).}
+\item{\code{input$<outputId>_validate_expressions}}{Expression validation
+results (after \code{\link{psp_validate_expressions}}).}
 }
 }
 \examples{

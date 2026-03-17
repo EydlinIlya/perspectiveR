@@ -4,13 +4,32 @@
 \alias{psp_export}
 \title{Export Data from a Perspective Viewer}
 \usage{
-psp_export(proxy, format = c("json", "csv", "columns", "arrow"))
+psp_export(
+  proxy,
+  format = c("json", "csv", "columns", "arrow"),
+  start_row = NULL,
+  end_row = NULL,
+  start_col = NULL,
+  end_col = NULL
+)
 }
 \arguments{
 \item{proxy}{A \code{\link{perspectiveProxy}} object.}
 
 \item{format}{Export format: \code{"json"} (default), \code{"csv"},
 \code{"columns"}, or \code{"arrow"} (base64-encoded Arrow IPC).}
+
+\item{start_row}{Optional single numeric value specifying the first row
+(0-based) to include in the export.}
+
+\item{end_row}{Optional single numeric value specifying the row (0-based,
+exclusive) at which to stop.}
+
+\item{start_col}{Optional single numeric value specifying the first column
+(0-based) to include.}
+
+\item{end_col}{Optional single numeric value specifying the column (0-based,
+exclusive) at which to stop.}
 }
 \value{
 The proxy object (invisibly), for chaining.

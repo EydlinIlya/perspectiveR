@@ -139,3 +139,51 @@ test_that("index must be a single character string", {
 test_that("index must name a column in data", {
   expect_error(perspective(mtcars, index = "nonexistent"), "not found in `data`")
 })
+
+# ---- filter_op tests ----
+
+test_that("filter_op is included in config", {
+  w <- perspective(mtcars, filter_op = "or")
+  expect_equal(w$x$config$filter_op, "or")
+})
+
+test_that("NULL filter_op is excluded from config", {
+  w <- perspective(mtcars)
+  expect_null(w$x$config$filter_op)
+})
+
+test_that("filter_op validates invalid values", {
+  expect_error(perspective(mtcars, filter_op = "xor"), '"and" or "or"')
+  expect_error(perspective(mtcars, filter_op = 123), '"and" or "or"')
+  expect_error(perspective(mtcars, filter_op = c("and", "or")), '"and" or "or"')
+})
+
+# ---- limit tests ----
+
+test_that("limit is included in widget payload", {
+  w <- perspective(mtcars, limit = 10L)
+  expect_equal(w$x$limit, 10L)
+})
+
+test_that("NULL limit is excluded from payload", {
+  w <- perspective(mtcars)
+  expect_null(w$x$limit)
+})
+
+test_that("limit accepts numeric that is integer-valued", {
+  w <- perspective(mtcars, limit = 10)
+  expect_equal(w$x$limit, 10L)
+})
+
+test_that("limit must be a single positive integer", {
+  expect_error(perspective(mtcars, limit = -1), "single positive integer")
+  expect_error(perspective(mtcars, limit = 0), "single positive integer")
+  expect_error(perspective(mtcars, limit = 1.5), "single positive integer")
+  expect_error(perspective(mtcars, limit = NA), "single positive integer")
+  expect_error(perspective(mtcars, limit = c(1, 2)), "single positive integer")
+})
+
+test_that("index and limit are mutually exclusive", {
+  expect_error(perspective(mtcars, index = "mpg", limit = 10),
+               "cannot both be set")
+})

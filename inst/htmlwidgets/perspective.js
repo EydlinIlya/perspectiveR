@@ -89,15 +89,20 @@ async function processProxyMessage(el, viewer, table, msg) {
       var view = await viewer.getView();
       var exportData;
       var format = msg.format || "json";
+      var windowOpts = {};
+      if (msg.start_row != null) windowOpts.start_row = msg.start_row;
+      if (msg.end_row != null) windowOpts.end_row = msg.end_row;
+      if (msg.start_col != null) windowOpts.start_col = msg.start_col;
+      if (msg.end_col != null) windowOpts.end_col = msg.end_col;
       if (format === "csv") {
-        exportData = await view.to_csv();
+        exportData = await view.to_csv(windowOpts);
       } else if (format === "columns") {
-        exportData = await view.to_columns();
+        exportData = await view.to_columns(windowOpts);
       } else if (format === "arrow") {
-        var arrowBuf = await view.to_arrow();
+        var arrowBuf = await view.to_arrow(windowOpts);
         exportData = arrayBufferToBase64(arrowBuf);
       } else {
-        exportData = await view.to_json();
+        exportData = await view.to_json(windowOpts);
       }
       if (HTMLWidgets.shinyMode) {
         Shiny.setInputValue(el.id + "_export", {
@@ -111,6 +116,42 @@ async function processProxyMessage(el, viewer, table, msg) {
       var state = await viewer.save();
       if (HTMLWidgets.shinyMode) {
         Shiny.setInputValue(el.id + "_state", state, {
+          priority: "event",
+        });
+      }
+      break;
+
+    case "schema":
+      var schema = await table.schema();
+      if (HTMLWidgets.shinyMode) {
+        Shiny.setInputValue(el.id + "_schema", schema, {
+          priority: "event",
+        });
+      }
+      break;
+
+    case "size":
+      var size = await table.size();
+      if (HTMLWidgets.shinyMode) {
+        Shiny.setInputValue(el.id + "_size", size, {
+          priority: "event",
+        });
+      }
+      break;
+
+    case "columns":
+      var columns = await table.columns();
+      if (HTMLWidgets.shinyMode) {
+        Shiny.setInputValue(el.id + "_columns", columns, {
+          priority: "event",
+        });
+      }
+      break;
+
+    case "validate_expressions":
+      var validationResult = await table.validate_expressions(msg.expressions);
+      if (HTMLWidgets.shinyMode) {
+        Shiny.setInputValue(el.id + "_validate_expressions", validationResult, {
           priority: "event",
         });
       }
@@ -204,6 +245,7 @@ HTMLWidgets.widget({
         // rather than inferring them as strings.
         var tableOpts = {};
         if (x.index) tableOpts.index = x.index;
+        if (x.limit) tableOpts.limit = x.limit;
 
         if (x.data_format !== "arrow" && x.schema) {
           var pspSchema = {};
@@ -229,6 +271,7 @@ HTMLWidgets.widget({
           if (x.config.split_by) config.split_by = x.config.split_by;
           if (x.config.sort) config.sort = x.config.sort;
           if (x.config.filter) config.filter = x.config.filter;
+          if (x.config.filter_op) config.filter_op = x.config.filter_op;
           if (x.config.expressions) config.expressions = x.config.expressions;
           if (x.config.aggregates) config.aggregates = x.config.aggregates;
           if (x.config.plugin) config.plugin = x.config.plugin;

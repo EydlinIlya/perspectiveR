@@ -19,6 +19,14 @@
 #'     \code{\link{psp_export}}).}
 #'   \item{\code{input$<outputId>_state}}{Saved viewer state (after
 #'     \code{\link{psp_save}}).}
+#'   \item{\code{input$<outputId>_schema}}{Table schema (after
+#'     \code{\link{psp_schema}}).}
+#'   \item{\code{input$<outputId>_size}}{Table row count (after
+#'     \code{\link{psp_size}}).}
+#'   \item{\code{input$<outputId>_columns}}{Table column names (after
+#'     \code{\link{psp_columns}}).}
+#'   \item{\code{input$<outputId>_validate_expressions}}{Expression validation
+#'     results (after \code{\link{psp_validate_expressions}}).}
 #' }
 #'
 #' @return A Shiny output element.
@@ -216,14 +224,39 @@ psp_remove <- function(proxy, keys) {
 #' @param proxy A \code{\link{perspectiveProxy}} object.
 #' @param format Export format: \code{"json"} (default), \code{"csv"},
 #'   \code{"columns"}, or \code{"arrow"} (base64-encoded Arrow IPC).
+#' @param start_row Optional single numeric value specifying the first row
+#'   (0-based) to include in the export.
+#' @param end_row Optional single numeric value specifying the row (0-based,
+#'   exclusive) at which to stop.
+#' @param start_col Optional single numeric value specifying the first column
+#'   (0-based) to include.
+#' @param end_col Optional single numeric value specifying the column (0-based,
+#'   exclusive) at which to stop.
 #'
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @export
-psp_export <- function(proxy, format = c("json", "csv", "columns", "arrow")) {
+psp_export <- function(proxy, format = c("json", "csv", "columns", "arrow"),
+                       start_row = NULL, end_row = NULL,
+                       start_col = NULL, end_col = NULL) {
   .validate_proxy(proxy)
   format <- match.arg(format)
-  .send_proxy_message(proxy, "export", list(format = format))
+  # Validate window params
+  for (param_name in c("start_row", "end_row", "start_col", "end_col")) {
+    val <- get(param_name)
+    if (!is.null(val)) {
+      if (!is.numeric(val) || length(val) != 1L || is.na(val)) {
+        stop(sprintf("`%s` must be a single numeric value.", param_name),
+             call. = FALSE)
+      }
+    }
+  }
+  payload <- list(format = format)
+  if (!is.null(start_row)) payload$start_row <- start_row
+  if (!is.null(end_row)) payload$end_row <- end_row
+  if (!is.null(start_col)) payload$start_col <- start_col
+  if (!is.null(end_col)) payload$end_col <- end_col
+  .send_proxy_message(proxy, "export", payload)
 }
 
 #' Save Viewer State
@@ -260,6 +293,74 @@ psp_save <- function(proxy) {
 psp_on_update <- function(proxy, enable = TRUE) {
   .validate_proxy(proxy)
   .send_proxy_message(proxy, "on_update", list(enable = enable))
+}
+
+#' Get Table Schema
+#'
+#' Requests the schema (column names and types) of the Perspective table.
+#' The result is delivered asynchronously to \code{input$<outputId>_schema}.
+#'
+#' @param proxy A \code{\link{perspectiveProxy}} object.
+#'
+#' @return The proxy object (invisibly), for chaining.
+#'
+#' @export
+psp_schema <- function(proxy) {
+  .validate_proxy(proxy)
+  .send_proxy_message(proxy, "schema", list())
+}
+
+#' Get Table Row Count
+#'
+#' Requests the number of rows in the Perspective table. The result is
+#' delivered asynchronously to \code{input$<outputId>_size}.
+#'
+#' @param proxy A \code{\link{perspectiveProxy}} object.
+#'
+#' @return The proxy object (invisibly), for chaining.
+#'
+#' @export
+psp_size <- function(proxy) {
+  .validate_proxy(proxy)
+  .send_proxy_message(proxy, "size", list())
+}
+
+#' Get Table Column Names
+#'
+#' Requests the column names of the Perspective table. The result is
+#' delivered asynchronously to \code{input$<outputId>_columns}.
+#'
+#' @param proxy A \code{\link{perspectiveProxy}} object.
+#'
+#' @return The proxy object (invisibly), for chaining.
+#'
+#' @export
+psp_columns <- function(proxy) {
+  .validate_proxy(proxy)
+  .send_proxy_message(proxy, "columns", list())
+}
+
+#' Validate Expressions
+#'
+#' Validates Perspective expression strings against the table without
+#' applying them. The result is delivered asynchronously to
+#' \code{input$<outputId>_validate_expressions}.
+#'
+#' @param proxy A \code{\link{perspectiveProxy}} object.
+#' @param expressions A non-empty character vector of expression strings.
+#'
+#' @return The proxy object (invisibly), for chaining.
+#'
+#' @export
+psp_validate_expressions <- function(proxy, expressions) {
+  .validate_proxy(proxy)
+  if (missing(expressions) || !is.character(expressions) ||
+      length(expressions) == 0L) {
+    stop("`expressions` must be a non-empty character vector.", call. = FALSE)
+  }
+  expr_obj <- .build_expressions(expressions)
+  .send_proxy_message(proxy, "validate_expressions",
+                      list(expressions = expr_obj))
 }
 
 #' Send a custom message to a Perspective widget via Shiny session

@@ -11,6 +11,7 @@ perspective(
   split_by = NULL,
   sort = NULL,
   filter = NULL,
+  filter_op = NULL,
   expressions = NULL,
   aggregates = NULL,
   plugin = NULL,
@@ -20,6 +21,7 @@ perspective(
   title = NULL,
   editable = FALSE,
   index = NULL,
+  limit = NULL,
   use_arrow = FALSE,
   width = NULL,
   height = NULL,
@@ -46,6 +48,10 @@ an operator (\code{"=="}, \code{"!="}, \code{">"}, \code{"<"}, \code{">="}, \cod
 \code{"begins with"}, \code{"contains"}, \code{"ends with"}, \code{"in"}, \code{"not in"},
 \code{"is null"}, \code{"is not null"}), and a value.
 For example: \code{list(c("cyl", "==", "6"))}.}
+
+\item{filter_op}{Character string controlling how multiple filters are
+combined: \code{"and"} (default) or \code{"or"}. If \code{NULL}, the
+Perspective default (\code{"and"}) is used.}
 
 \item{expressions}{Character vector of Perspective expression strings for
 computed columns. For example: \code{c('"Profit" / "Sales"')}.}
@@ -81,6 +87,11 @@ key. When set, \code{psp_update()} performs upserts (matching rows are
 updated instead of appended) and \code{psp_remove()} can delete rows by
 key. Must be the name of a column present in \code{data}. Default
 \code{NULL} (no index).}
+
+\item{limit}{Single positive integer specifying the maximum number of rows
+the table will hold. When new rows are added beyond this limit, the oldest
+rows are removed (rolling window). Mutually exclusive with \code{index}.
+Default \code{NULL} (no limit).}
 
 \item{use_arrow}{Logical; if \code{TRUE}, serialize data using Arrow IPC
 format (base64-encoded) for better performance with large datasets.
@@ -118,6 +129,14 @@ when subscribed via \code{\link{psp_on_update}}.}
 calling \code{\link{psp_export}}.}
 \item{\code{input$<outputId>_state}}{Contains saved viewer state after
 calling \code{\link{psp_save}}.}
+\item{\code{input$<outputId>_schema}}{Contains the table schema after
+calling \code{\link{psp_schema}}.}
+\item{\code{input$<outputId>_size}}{Contains the table row count after
+calling \code{\link{psp_size}}.}
+\item{\code{input$<outputId>_columns}}{Contains the table column names
+after calling \code{\link{psp_columns}}.}
+\item{\code{input$<outputId>_validate_expressions}}{Contains expression
+validation results after calling \code{\link{psp_validate_expressions}}.}
 }
 }
 \examples{
