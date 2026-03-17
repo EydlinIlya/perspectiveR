@@ -113,6 +113,12 @@ shinyApp(ui, server)
 - `psp_columns(proxy)` — get table column names
 - `psp_validate_expressions(proxy, expressions)` — validate expression strings
 
+## Related Projects
+
+- [Perspective](https://github.com/finos/perspective) — the upstream WebAssembly data visualization engine this package wraps
+- [GWalkR](https://github.com/Kanaries/GWalkR) — interactive data exploration widget powered by Graphic Walker
+- [esquisse](https://github.com/dreamRs/esquisse) — drag-and-drop ggplot2 builder as a Shiny module
+
 ## Building the JS Bundle
 
 The pre-built JS bundle is included. To rebuild from source:
@@ -127,3 +133,5 @@ npm run copy-themes
 ## License
 
 Apache License 2.0
+
+*'Perspective' is a project of the [OpenJS Foundation](https://openjsf.org/). peRspective is an independent community package and is not affiliated with or endorsed by the OpenJS Foundation.*
