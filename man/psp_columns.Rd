@@ -16,3 +16,10 @@ The proxy object (invisibly), for chaining.
 Requests the column names of the Perspective table. The result is
 delivered asynchronously to \code{input$<outputId>_columns}.
 }
+\examples{
+\dontrun{
+proxy <- perspectiveProxy(session, "viewer")
+psp_columns(proxy)
+}
+
+}

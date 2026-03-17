@@ -17,3 +17,10 @@ Requests the current viewer configuration (columns, pivots, filters, sort,
 plugin, etc.). The result is delivered asynchronously to
 \code{input$<outputId>_state}.
 }
+\examples{
+\dontrun{
+proxy <- perspectiveProxy(session, "viewer")
+psp_save(proxy)
+}
+
+}

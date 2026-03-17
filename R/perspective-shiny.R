@@ -151,6 +151,12 @@ psp_replace <- function(proxy, data, use_arrow = FALSE) {
 #'
 #' @return The proxy object (invisibly), for chaining.
 #'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_clear(proxy)
+#' }
+#'
 #' @export
 psp_clear <- function(proxy) {
   .validate_proxy(proxy)
@@ -207,6 +213,12 @@ psp_reset <- function(proxy) {
 #'
 #' @return The proxy object (invisibly), for chaining.
 #'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_remove(proxy, keys = c("row1", "row2"))
+#' }
+#'
 #' @export
 psp_remove <- function(proxy, keys) {
   .validate_proxy(proxy)
@@ -234,6 +246,12 @@ psp_remove <- function(proxy, keys) {
 #'   exclusive) at which to stop.
 #'
 #' @return The proxy object (invisibly), for chaining.
+#'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_export(proxy, format = "csv")
+#' }
 #'
 #' @export
 psp_export <- function(proxy, format = c("json", "csv", "columns", "arrow"),
@@ -269,6 +287,12 @@ psp_export <- function(proxy, format = c("json", "csv", "columns", "arrow"),
 #'
 #' @return The proxy object (invisibly), for chaining.
 #'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_save(proxy)
+#' }
+#'
 #' @export
 psp_save <- function(proxy) {
   .validate_proxy(proxy)
@@ -289,6 +313,12 @@ psp_save <- function(proxy) {
 #'
 #' @return The proxy object (invisibly), for chaining.
 #'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_on_update(proxy)
+#' }
+#'
 #' @export
 psp_on_update <- function(proxy, enable = TRUE) {
   .validate_proxy(proxy)
@@ -303,6 +333,12 @@ psp_on_update <- function(proxy, enable = TRUE) {
 #' @param proxy A \code{\link{perspectiveProxy}} object.
 #'
 #' @return The proxy object (invisibly), for chaining.
+#'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_schema(proxy)
+#' }
 #'
 #' @export
 psp_schema <- function(proxy) {
@@ -319,6 +355,12 @@ psp_schema <- function(proxy) {
 #'
 #' @return The proxy object (invisibly), for chaining.
 #'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_size(proxy)
+#' }
+#'
 #' @export
 psp_size <- function(proxy) {
   .validate_proxy(proxy)
@@ -333,6 +375,12 @@ psp_size <- function(proxy) {
 #' @param proxy A \code{\link{perspectiveProxy}} object.
 #'
 #' @return The proxy object (invisibly), for chaining.
+#'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_columns(proxy)
+#' }
 #'
 #' @export
 psp_columns <- function(proxy) {
@@ -350,6 +398,12 @@ psp_columns <- function(proxy) {
 #' @param expressions A non-empty character vector of expression strings.
 #'
 #' @return The proxy object (invisibly), for chaining.
+#'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_validate_expressions(proxy, expressions = c("\"col1\" + \"col2\""))
+#' }
 #'
 #' @export
 psp_validate_expressions <- function(proxy, expressions) {

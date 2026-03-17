@@ -38,3 +38,10 @@ The proxy object (invisibly), for chaining.
 Requests data export from the current Perspective view. The result is
 delivered asynchronously to \code{input$<outputId>_export}.
 }
+\examples{
+\dontrun{
+proxy <- perspectiveProxy(session, "viewer")
+psp_export(proxy, format = "csv")
+}
+
+}

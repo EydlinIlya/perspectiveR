@@ -16,3 +16,10 @@ The proxy object (invisibly), for chaining.
 Requests the number of rows in the Perspective table. The result is
 delivered asynchronously to \code{input$<outputId>_size}.
 }
+\examples{
+\dontrun{
+proxy <- perspectiveProxy(session, "viewer")
+psp_size(proxy)
+}
+
+}

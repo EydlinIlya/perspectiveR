@@ -15,3 +15,4 @@
 ^\.lintr$
 ^\.editorconfig$
 ^\.gitignore$
+^cran-comments\.md$

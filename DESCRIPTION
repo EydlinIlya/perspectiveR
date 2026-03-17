@@ -5,8 +5,6 @@ Version: 0.3.0
 Authors@R: c(
     person("Eli", "Eydlin", email = "ilyabeydlin@gmail.com",
            role = c("aut", "cre")))
-Author: Eli Eydlin [aut, cre]
-Maintainer: Eli Eydlin <ilyabeydlin@gmail.com>
 Description: An 'htmlwidgets' binding for the 'FINOS Perspective'
     <https://perspective.finos.org/> library, a high-performance
     WebAssembly-powered data visualization engine. Provides interactive pivot
@@ -16,7 +14,7 @@ Description: An 'htmlwidgets' binding for the 'FINOS Perspective'
     group-by/split-by pivoting, filtering, sorting, aggregation, and computed
     expressions. Works in 'RStudio' Viewer, 'R Markdown', 'Quarto', and
     'Shiny' with streaming data updates via proxy interface.
-License: Apache License (>= 2) | file LICENSE
+License: Apache License 2.0 | file LICENSE
 URL: https://github.com/EydlinIlya/peRspective
 BugReports: https://github.com/EydlinIlya/peRspective/issues
 Encoding: UTF-8

@@ -22,3 +22,10 @@ with a list containing \code{timestamp}, \code{port_id}, and
 \code{source} (\code{"edit"} for user edits, \code{"api"} for
 programmatic updates).
 }
+\examples{
+\dontrun{
+proxy <- perspectiveProxy(session, "viewer")
+psp_on_update(proxy)
+}
+
+}
