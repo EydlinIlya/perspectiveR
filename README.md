@@ -45,14 +45,17 @@ perspective(iris,
 
 ## Shiny Demo
 
-A full interactive demo is bundled with the package:
+A streaming stock market demo is bundled with the package:
 
 ```r
 library(peRspective)
 run_example("shiny-basic")
 ```
 
-This launches a Shiny app where you can switch datasets, chart types, and themes, stream new rows, replace/clear data, and see live config changes from the viewer.
+This launches a Shiny app that replays European stock market data (DAX, SMI,
+CAC, FTSE 1991-1998) as an X/Y Line chart, streaming one row per second with
+a 100-row sliding window. Select a year and drag additional indices from the
+column list to compare.
 
 ### Shiny Usage
 
@@ -61,25 +64,20 @@ library(shiny)
 library(peRspective)
 
 ui <- fluidPage(
-  actionButton("add", "Add Rows"),
+  selectInput("dataset", "Dataset:",
+    choices = c("mtcars", "iris", "airquality")
+  ),
   perspectiveOutput("viewer", height = "600px")
 )
 
 server <- function(input, output, session) {
   output$viewer <- renderPerspective({
-    perspective(mtcars, plugin = "Y Bar", group_by = "cyl")
-  })
-
-  # Stream new rows into the existing table
-  observeEvent(input$add, {
-    proxy <- perspectiveProxy(session, "viewer")
-    new_rows <- mtcars[sample(nrow(mtcars), 5), ]
-    psp_update(proxy, new_rows)
-  })
-
-  # Capture user's interactive config changes
-  observeEvent(input$viewer_config, {
-    saved_config <- input$viewer_config
+    data <- switch(input$dataset,
+      "mtcars" = mtcars,
+      "iris" = iris,
+      "airquality" = airquality
+    )
+    perspective(data)
   })
 }
 

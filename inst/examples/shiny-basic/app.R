@@ -1,34 +1,30 @@
 library(shiny)
 library(peRspective)
 
+# European stock market closing prices (1991-1998)
+stocks <- as.data.frame(EuStockMarkets)
+stocks$Date <- seq(as.Date("1991-07-01"), length.out = nrow(stocks), by = "day")
+stocks <- stocks[, c("Date", "DAX", "SMI", "CAC", "FTSE")]
+stocks$Year <- as.integer(format(stocks$Date, "%Y"))
+available_years <- sort(unique(stocks$Year))
+
+WINDOW_SIZE <- 100
+
 ui <- fluidPage(
   titlePanel("peRspective Demo"),
   sidebarLayout(
     sidebarPanel(
       width = 3,
-      selectInput("dataset", "Dataset:",
-        choices = c("mtcars", "iris", "airquality"),
-        selected = "mtcars"
+      selectInput("year", "Year:",
+        choices = available_years,
+        selected = available_years[1]
       ),
-      selectInput("theme", "Theme:",
-        choices = c(
-          "Pro Light", "Pro Dark", "Monokai",
-          "Solarized Light", "Solarized Dark",
-          "Vaporwave"
-        ),
-        selected = "Pro Light"
-      ),
+      actionButton("start_over", "Start Over", class = "btn-primary"),
       hr(),
-      h4("Streaming Data Controls"),
-      actionButton("add_rows", "Add 5 Random Rows", class = "btn-success"),
-      actionButton("replace_data", "Replace With Subset", class = "btn-warning"),
-      actionButton("clear_data", "Clear All Data", class = "btn-danger"),
-      actionButton("reset_view", "Reset View"),
-      hr(),
-      h4("Viewer Config (live)"),
-      helpText("Interact with the viewer (change columns, filters, etc.)
-               and the config will appear here:"),
-      verbatimTextOutput("config_display")
+      helpText(
+        "EU stock indices streamed row by row.",
+        "Drag columns in the viewer to compare indices."
+      )
     ),
     mainPanel(
       width = 9,
@@ -38,57 +34,51 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  get_data <- function() {
-    switch(input$dataset,
-      "mtcars" = mtcars,
-      "iris" = iris,
-      "airquality" = airquality
-    )
-  }
+  current_row <- reactiveVal(1)
 
+  year_data <- reactive({
+    yr <- as.integer(input$year)
+    stocks[stocks$Year == yr, c("Date", "DAX", "SMI", "CAC", "FTSE")]
+  })
+
+  # Render once with first year's data
   output$viewer <- renderPerspective({
-    perspective(get_data(),
-      theme = input$theme,
+    data <- isolate(year_data())
+    perspective(
+      data[1, ],
+      plugin = "X/Y Line",
+      columns = list("Date", "DAX"),
       settings = TRUE
     )
   })
 
-  observeEvent(input$add_rows, {
+  # Year change: reset stream, replace data (preserves user's column selections)
+  observeEvent(input$year, {
+    current_row(1)
     proxy <- perspectiveProxy(session, "viewer")
-    data <- get_data()
-    new_rows <- data[sample(nrow(data), 5, replace = TRUE), ]
-    for (col in names(new_rows)) {
-      if (is.numeric(new_rows[[col]])) {
-        new_rows[[col]] <- round(new_rows[[col]] * runif(5, 0.8, 1.2), 2)
-      }
-    }
-    psp_update(proxy, new_rows)
+    psp_replace(proxy, year_data()[1, ])
+  }, ignoreInit = TRUE)
+
+  observeEvent(input$start_over, {
+    current_row(1)
+    proxy <- perspectiveProxy(session, "viewer")
+    psp_replace(proxy, year_data()[1, ])
   })
 
-  observeEvent(input$replace_data, {
-    proxy <- perspectiveProxy(session, "viewer")
-    data <- get_data()
-    subset_data <- data[sample(nrow(data), min(15, nrow(data))), ]
-    psp_replace(proxy, subset_data)
-  })
+  # Stream one row per second, sliding window after WINDOW_SIZE
+  observe({
+    invalidateLater(1000)
 
-  observeEvent(input$clear_data, {
-    proxy <- perspectiveProxy(session, "viewer")
-    psp_clear(proxy)
-  })
+    data <- isolate(year_data())
+    pos <- isolate(current_row())
+    if (pos >= nrow(data)) return()
 
-  observeEvent(input$reset_view, {
-    proxy <- perspectiveProxy(session, "viewer")
-    psp_reset(proxy)
-  })
+    new_pos <- pos + 1
+    current_row(new_pos)
 
-  output$config_display <- renderPrint({
-    cfg <- input$viewer_config
-    if (is.null(cfg)) {
-      cat("(interact with the viewer to see config)")
-    } else {
-      str(cfg, max.level = 2)
-    }
+    start <- max(1, new_pos - WINDOW_SIZE + 1)
+    proxy <- perspectiveProxy(session, "viewer")
+    psp_replace(proxy, data[start:new_pos, ])
   })
 }
 

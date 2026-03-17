@@ -10,6 +10,12 @@ tools/package-lock.json
 # Build artifacts that are regenerated
 inst/htmlwidgets/lib/perspective-3.8.0/perspective-all.mjs
 
+# Playwright MCP
+.playwright-mcp/
+
+# Claude Code
+.claude/
+
 # OS files
 .DS_Store
 Thumbs.db

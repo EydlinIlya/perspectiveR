@@ -31,21 +31,43 @@ function base64ToArrayBuffer(base64) {
   return bytes.buffer;
 }
 
-// ---- Theme management ----
-function applyTheme(viewer, theme) {
-  // Remove all existing theme classes
-  var themeClasses = [
-    "perspective-viewer-material",
-    "perspective-viewer-material-dark",
-    "perspective-viewer-material-dense",
-  ];
-  themeClasses.forEach(function (cls) {
-    viewer.classList.remove(cls);
-  });
+// ---- Proxy message processing ----
+async function processProxyMessage(viewer, table, msg) {
+  switch (msg.method) {
+    case "update":
+      var updateData;
+      if (msg.format === "arrow") {
+        updateData = base64ToArrayBuffer(msg.data);
+      } else {
+        updateData = JSON.parse(msg.data);
+      }
+      await table.update(updateData);
+      break;
 
-  // Perspective v3 uses a theme attribute
-  if (theme) {
-    viewer.setAttribute("theme", theme);
+    case "replace":
+      var replaceData;
+      if (msg.format === "arrow") {
+        replaceData = base64ToArrayBuffer(msg.data);
+      } else {
+        replaceData = JSON.parse(msg.data);
+      }
+      await table.replace(replaceData);
+      break;
+
+    case "clear":
+      await table.clear();
+      await viewer.load(table);
+      break;
+
+    case "restore":
+      if (msg.config) {
+        await viewer.restore(msg.config);
+      }
+      break;
+
+    case "reset":
+      await viewer.load(table);
+      break;
   }
 }
 
@@ -62,6 +84,10 @@ HTMLWidgets.widget({
 
     return {
       renderValue: async function (x) {
+        // Mark not ready while initializing (clears refs from previous render)
+        el.__pspViewer = null;
+        el.__pspTable = null;
+
         // Wait for Perspective WASM to be ready
         worker = await waitForPerspective();
 
@@ -73,9 +99,6 @@ HTMLWidgets.widget({
         viewer.style.width = "100%";
         viewer.style.height = "100%";
         el.appendChild(viewer);
-
-        // Apply theme
-        applyTheme(viewer, x.theme);
 
         // Parse data based on format
         var tableData;
@@ -163,10 +186,19 @@ HTMLWidgets.widget({
         el.__pspViewer = viewer;
         el.__pspTable = table;
         el.__pspWorker = worker;
+
+        // Flush any proxy messages that arrived during async initialization
+        if (el.__pspPendingMsgs) {
+          var pending = el.__pspPendingMsgs;
+          el.__pspPendingMsgs = [];
+          for (var pi = 0; pi < pending.length; pi++) {
+            await processProxyMessage(viewer, table, pending[pi]);
+          }
+        }
       },
 
       resize: function (width, height) {
-        if (viewer) {
+        if (viewer && viewer.notifyResize) {
           viewer.notifyResize();
         }
       },
@@ -184,51 +216,17 @@ HTMLWidgets.widget({
 
 // ---- Shiny proxy message handler ----
 if (HTMLWidgets.shinyMode) {
-  Shiny.addCustomMessageHandler("perspective-calls", async function (msg) {
+  Shiny.addCustomMessageHandler("perspective-calls", function (msg) {
     var el = document.getElementById(msg.id);
     if (!el) return;
 
-    var viewer = el.__pspViewer;
-    var table = el.__pspTable;
-
-    if (!viewer || !table) return;
-
-    switch (msg.method) {
-      case "update":
-        var updateData;
-        if (msg.format === "arrow") {
-          updateData = base64ToArrayBuffer(msg.data);
-        } else {
-          updateData = JSON.parse(msg.data);
-        }
-        await table.update(updateData);
-        break;
-
-      case "replace":
-        var replaceData;
-        if (msg.format === "arrow") {
-          replaceData = base64ToArrayBuffer(msg.data);
-        } else {
-          replaceData = JSON.parse(msg.data);
-        }
-        await table.replace(replaceData);
-        break;
-
-      case "clear":
-        await table.clear();
-        await viewer.draw();
-        break;
-
-      case "restore":
-        if (msg.config) {
-          await viewer.restore(msg.config);
-        }
-        break;
-
-      case "reset":
-        await viewer.reset();
-        await viewer.draw();
-        break;
+    // Queue messages that arrive before the viewer is ready
+    if (!el.__pspViewer || !el.__pspTable) {
+      if (!el.__pspPendingMsgs) el.__pspPendingMsgs = [];
+      el.__pspPendingMsgs.push(msg);
+      return;
     }
+
+    processProxyMessage(el.__pspViewer, el.__pspTable, msg);
   });
 }
