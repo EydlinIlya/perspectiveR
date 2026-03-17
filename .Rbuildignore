@@ -16,3 +16,7 @@
 ^\.editorconfig$
 ^\.gitignore$
 ^cran-comments\.md$
+^\.playwright-mcp$
+^\.playwright-mcp/.*$
+^doc$
+^Meta$

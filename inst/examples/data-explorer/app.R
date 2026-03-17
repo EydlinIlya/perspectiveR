@@ -7,13 +7,6 @@ aq$Date <- as.Date(paste("1973", aq$Month, aq$Day, sep = "-"))
 aq <- aq[order(aq$Date), ]
 rownames(aq) <- NULL
 
-# Helper to build expression object (mirrors internal .build_expressions)
-build_expr <- function(expr_str) {
-  result <- as.list(expr_str)
-  names(result) <- expr_str
-  result
-}
-
 ui <- fluidPage(
   titlePanel("Data Explorer Demo"),
   sidebarLayout(
@@ -31,29 +24,6 @@ ui <- fluidPage(
         actionButton("start_stream", "Start Stream", class = "btn-success"),
         actionButton("stop_stream", "Stop Stream", class = "btn-warning")
       ),
-
-      hr(),
-      h4("Filter Demo"),
-      checkboxInput("filter_ozone", "Ozone > 60", value = FALSE),
-      checkboxInput("filter_temp", "Temp > 85", value = FALSE),
-      checkboxInput("filter_wind", "Wind < 8", value = FALSE),
-      radioButtons("filter_op", "Combine filters with:",
-        choices = c("and", "or"), selected = "and", inline = TRUE
-      ),
-      actionButton("apply_filters", "Apply Filters", class = "btn-primary"),
-
-      hr(),
-      h4("Expressions"),
-      textInput("expr_input", "Expression:",
-        placeholder = '// Temp in Celsius\n("Temp" - 32) * 5 / 9'
-      ),
-      helpText(
-        'Examples: "Ozone" * 2, ("Temp" - 32) * 5 / 9,',
-        'if("Ozone" > 60) "High" else "Low"'
-      ),
-      actionButton("validate_expr", "Validate"),
-      actionButton("add_expr", "Add to View", class = "btn-primary"),
-      verbatimTextOutput("validation_result"),
 
       hr(),
       h4("Table Metadata"),
@@ -75,8 +45,11 @@ ui <- fluidPage(
       radioButtons("window_export_format", "Format:",
         choices = c("json", "csv"), inline = TRUE
       ),
-      actionButton("windowed_export", "Export Window", class = "btn-info"),
-      verbatimTextOutput("export_preview")
+      actionButton("prepare_export", "Prepare Export", class = "btn-info"),
+      conditionalPanel(
+        condition = "output.export_available",
+        downloadButton("download_export", "Download", class = "btn-success")
+      )
     ),
     mainPanel(
       width = 8,
@@ -89,8 +62,9 @@ server <- function(input, output, session) {
   streaming <- reactiveVal(FALSE)
   stream_row <- reactiveVal(1)
   metadata_text <- reactiveVal(NULL)
-  validation_text <- reactiveVal(NULL)
-  export_text <- reactiveVal(NULL)
+  export_result <- reactiveVal(NULL)
+  export_ready <- reactiveVal(FALSE)
+  export_fmt <- reactiveVal("json")
 
   # Initial render
   output$viewer <- renderPerspective({
@@ -140,46 +114,6 @@ server <- function(input, output, session) {
     stream_row(pos + 1)
   })
 
-  # Apply filters
-  observeEvent(input$apply_filters, {
-    filters <- list()
-    if (input$filter_ozone) filters[[length(filters) + 1]] <- c("Ozone", ">", "60")
-    if (input$filter_temp) filters[[length(filters) + 1]] <- c("Temp", ">", "85")
-    if (input$filter_wind) filters[[length(filters) + 1]] <- c("Wind", "<", "8")
-
-    config <- list()
-    if (length(filters) > 0) {
-      config$filter <- filters
-      config$filter_op <- input$filter_op
-    } else {
-      config$filter <- list()
-    }
-    psp_restore(proxy(), config)
-  })
-
-  # Validate expression
-  observeEvent(input$validate_expr, {
-    req(nzchar(input$expr_input))
-    psp_validate_expressions(proxy(), input$expr_input)
-    validation_text("Validating...")
-  })
-
-  observeEvent(input$viewer_validate_expressions, {
-    result <- input$viewer_validate_expressions
-    if (is.null(result)) return()
-    validation_text(
-      paste(utils::capture.output(utils::str(result, max.level = 3)), collapse = "\n")
-    )
-  })
-
-  output$validation_result <- renderText(validation_text())
-
-  # Add expression to view
-  observeEvent(input$add_expr, {
-    req(nzchar(input$expr_input))
-    psp_restore(proxy(), list(expressions = build_expr(input$expr_input)))
-  })
-
   # Table metadata
   observeEvent(input$get_schema, {
     psp_schema(proxy())
@@ -217,8 +151,11 @@ server <- function(input, output, session) {
 
   output$metadata_display <- renderText(metadata_text())
 
-  # Windowed export
-  observeEvent(input$windowed_export, {
+  # Windowed export (two-step: prepare then download)
+  observeEvent(input$prepare_export, {
+    export_ready(FALSE)
+    export_result(NULL)
+    export_fmt(input$window_export_format)
     psp_export(proxy(),
       format = input$window_export_format,
       start_row = input$start_row,
@@ -226,21 +163,35 @@ server <- function(input, output, session) {
       start_col = input$start_col,
       end_col = input$end_col
     )
-    export_text("Exporting...")
   })
 
   observeEvent(input$viewer_export, {
     result <- input$viewer_export
     if (is.null(result)) return()
-    preview <- if (is.character(result)) {
-      substr(result, 1, 2000)
-    } else {
-      paste(utils::capture.output(utils::str(result, max.level = 2)), collapse = "\n")
-    }
-    export_text(preview)
+    export_result(result)
+    export_ready(TRUE)
   })
 
-  output$export_preview <- renderText(export_text())
+  # Gate the download button visibility
+  output$export_available <- reactive(export_ready())
+  outputOptions(output, "export_available", suspendWhenHidden = FALSE)
+
+  # Download handler
+  output$download_export <- downloadHandler(
+    filename = function() {
+      fmt <- export_fmt()
+      paste0("perspective_export.", fmt)
+    },
+    content = function(file) {
+      result <- export_result()
+      fmt <- export_fmt()
+      if (fmt == "csv") {
+        writeLines(result$data, file)
+      } else {
+        jsonlite::write_json(result$data, file, auto_unbox = TRUE, pretty = TRUE)
+      }
+    }
+  )
 }
 
 shinyApp(ui, server)

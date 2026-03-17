@@ -30,8 +30,11 @@ ui <- fluidPage(
       hr(),
       h4("Export Data"),
       radioButtons("export_format", "Format:", choices = c("json", "csv"), inline = TRUE),
-      actionButton("export_btn", "Export", class = "btn-info"),
-      verbatimTextOutput("export_preview"),
+      actionButton("prepare_export", "Prepare Export", class = "btn-info"),
+      conditionalPanel(
+        condition = "output.export_available",
+        downloadButton("download_export", "Download", class = "btn-success")
+      ),
 
       hr(),
       h4("Activity Log"),
@@ -48,7 +51,9 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   clicked_car <- reactiveVal(NULL)
   log_entries <- reactiveVal(character(0))
-  export_data <- reactiveVal(NULL)
+  export_result <- reactiveVal(NULL)
+  export_ready <- reactiveVal(FALSE)
+  export_fmt <- reactiveVal("json")
 
   # Render the table with index = "car" for keyed upserts
 
@@ -107,25 +112,41 @@ server <- function(input, output, session) {
     clicked_car(NULL)
   })
 
-  # Export
-  observeEvent(input$export_btn, {
+  # Prepare Export (two-step: prepare then download)
+  observeEvent(input$prepare_export, {
+    export_ready(FALSE)
+    export_result(NULL)
+    export_fmt(input$export_format)
     psp_export(proxy(), format = input$export_format)
   })
 
   observeEvent(input$viewer_export, {
     result <- input$viewer_export
     if (is.null(result)) return()
-    preview <- if (is.character(result)) {
-      substr(result, 1, 2000)
-    } else {
-      paste(utils::capture.output(utils::str(result, max.level = 2)), collapse = "\n")
-    }
-    export_data(preview)
+    export_result(result)
+    export_ready(TRUE)
   })
 
-  output$export_preview <- renderText({
-    export_data()
-  })
+  # Gate the download button visibility
+  output$export_available <- reactive(export_ready())
+  outputOptions(output, "export_available", suspendWhenHidden = FALSE)
+
+  # Download handler
+  output$download_export <- downloadHandler(
+    filename = function() {
+      fmt <- export_fmt()
+      paste0("perspective_export.", fmt)
+    },
+    content = function(file) {
+      result <- export_result()
+      fmt <- export_fmt()
+      if (fmt == "csv") {
+        writeLines(result$data, file)
+      } else {
+        jsonlite::write_json(result$data, file, auto_unbox = TRUE, pretty = TRUE)
+      }
+    }
+  )
 
   # Activity log from update events
   observeEvent(input$viewer_update, {

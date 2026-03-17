@@ -19,3 +19,5 @@ inst/htmlwidgets/lib/perspective-3.8.0/perspective-all.mjs
 # OS files
 .DS_Store
 Thumbs.db
+/doc/
+/Meta/

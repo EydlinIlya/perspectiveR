@@ -24,7 +24,8 @@ NULL
 #' @export
 run_example <- function(example = NULL, ...) {
   examples_dir <- system.file("examples", package = "peRspective")
-  available <- list.dirs(examples_dir, full.names = FALSE, recursive = FALSE)
+  all_dirs <- list.dirs(examples_dir, full.names = FALSE, recursive = FALSE)
+  available <- all_dirs[file.exists(file.path(examples_dir, all_dirs, "app.R"))]
 
   if (is.null(example)) {
     message("Available peRspective examples:\n",

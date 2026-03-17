@@ -164,25 +164,12 @@ async function processProxyMessage(el, viewer, table, msg) {
           table.remove_update(el.__pspUpdateCallback);
           el.__pspUpdateCallback = null;
         }
-        var callback = async function (updated) {
+        var callback = function (updated) {
           var payload = {
             timestamp: Date.now(),
             port_id: updated.port_id,
             source: updated.port_id > 0 ? "edit" : "api",
           };
-          if (updated.port_id > 0 && updated.delta) {
-            // Decode Arrow delta for edit events
-            try {
-              var worker = el.__pspWorker;
-              var tmpTable = await worker.table(updated.delta);
-              var tmpView = await tmpTable.view();
-              payload.delta = await tmpView.to_json();
-              tmpView.delete();
-              tmpTable.delete();
-            } catch (e) {
-              // If delta decode fails, send without it
-            }
-          }
           if (HTMLWidgets.shinyMode) {
             Shiny.setInputValue(el.id + "_update", payload, {
               priority: "event",
@@ -190,7 +177,7 @@ async function processProxyMessage(el, viewer, table, msg) {
           }
         };
         el.__pspUpdateCallback = callback;
-        table.on_update(callback, { mode: "row" });
+        table.on_update(callback);
       } else {
         if (el.__pspUpdateCallback) {
           table.remove_update(el.__pspUpdateCallback);

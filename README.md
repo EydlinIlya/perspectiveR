@@ -8,7 +8,7 @@
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-R htmlwidgets binding for the [FINOS Perspective](https://perspective.finos.org/) library -- a high-performance WebAssembly-powered data visualization engine with interactive pivot tables and multiple chart types.
+R htmlwidgets binding for the [FINOS Perspective](https://perspective-dev.github.io/) library -- a high-performance WebAssembly-powered data visualization engine with interactive pivot tables and multiple chart types.
 
 ## Installation
 
@@ -54,21 +54,19 @@ perspective(iris,
 
 ## Shiny Demos
 
-Four interactive demos are bundled with the package:
+Three interactive demos are bundled with the package:
 
 ```r
 library(peRspective)
 run_example()             # list all available demos
 run_example("shiny-basic")
 run_example("crud-table")
-run_example("analytics-dashboard")
 run_example("data-explorer")
 ```
 
-- **shiny-basic** — Streaming stock market line chart (DAX, SMI, CAC, FTSE 1991-1998) with a 100-row sliding window.
-- **crud-table** — Editable indexed CRUD table with click events, add/update/delete rows by key, data export, and an update activity log.
-- **analytics-dashboard** — Multi-view analytics on `ChickWeight` with chart type switching, 9 themes, group-by/split-by pivoting, presets, state save/restore, and selection events.
-- **data-explorer** — Table introspection on `airquality` with expressions (computed columns), filter_op (and/or), rolling-window streaming, windowed export, and metadata queries (schema/size/columns).
+- **shiny-basic** — Streaming stock market line chart (DAX, SMI, CAC, FTSE 1991-1998) with a 100-row sliding window, Arrow IPC toggle, expression validation, and named state save/restore.
+- **crud-table** — Editable indexed CRUD table with click events, add/update/delete rows by key, downloadable CSV/JSON export, and an update activity log.
+- **data-explorer** — Table introspection on `airquality` with rolling-window streaming, downloadable windowed export, and metadata queries (schema/size/columns).
 
 ### Shiny Usage
 
