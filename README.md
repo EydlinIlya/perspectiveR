@@ -2,6 +2,12 @@
 
 # peRspective
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/EydlinIlya/peRspective/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EydlinIlya/peRspective/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/EydlinIlya/peRspective/graph/badge.svg)](https://codecov.io/gh/EydlinIlya/peRspective)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+<!-- badges: end -->
+
 R htmlwidgets binding for the [FINOS Perspective](https://perspective.finos.org/) library -- a high-performance WebAssembly-powered data visualization engine with interactive pivot tables and 12+ chart types.
 
 ## Installation
