@@ -25,13 +25,14 @@
 #'   For example: \code{list(mpg = "avg", hp = "sum")}.
 #' @param plugin Character string specifying the visualization plugin.
 #'   Options include: \code{"Datagrid"}, \code{"Y Bar"}, \code{"X Bar"},
-#'   \code{"Y Line"}, \code{"Y Area"}, \code{"Y Scatter"}, \code{"XY Scatter"},
-#'   \code{"Treemap"}, \code{"Sunburst"}, \code{"Heatmap"}.
+#'   \code{"Y Line"}, \code{"X/Y Line"}, \code{"Y Area"}, \code{"Y Scatter"},
+#'   \code{"XY Scatter"}, \code{"Treemap"}, \code{"Sunburst"}, \code{"Heatmap"}.
 #' @param plugin_config A list of plugin-specific configuration options.
 #' @param theme Character string specifying the CSS theme. Options:
 #'   \code{"Pro Light"}, \code{"Pro Dark"}, \code{"Monokai"},
 #'   \code{"Solarized Light"}, \code{"Solarized Dark"},
-#'   \code{"Vaporwave"}. Default is \code{"Pro Light"}.
+#'   \code{"Vaporwave"}, \code{"Dracula"}, \code{"Gruvbox"},
+#'   \code{"Gruvbox Dark"}. Default is \code{"Pro Light"}.
 #' @param settings Logical; whether to show the settings/configuration panel
 #'   sidebar. Default \code{TRUE}. This is the interactive UI where users
 #'   drag-and-drop columns, change chart types, add filters, etc.
@@ -39,12 +40,35 @@
 #'   is shown.
 #' @param editable Logical; whether the data in the grid is user-editable.
 #'   Default \code{FALSE}.
+#' @param index Character string naming a column to use as the table's primary
+#'   key. When set, \code{psp_update()} performs upserts (matching rows are
+#'   updated instead of appended) and \code{psp_remove()} can delete rows by
+#'   key. Must be the name of a column present in \code{data}. Default
+#'   \code{NULL} (no index).
 #' @param use_arrow Logical; if \code{TRUE}, serialize data using Arrow IPC
 #'   format (base64-encoded) for better performance with large datasets.
 #'   Requires the \code{arrow} package. Default \code{FALSE}.
 #' @param width Widget width (CSS string or numeric pixels).
 #' @param height Widget height (CSS string or numeric pixels).
 #' @param elementId Optional explicit element ID for the widget.
+#'
+#' @details
+#' When used in a Shiny app, the following reactive inputs are available
+#' (where \code{outputId} is the ID passed to \code{\link{perspectiveOutput}}):
+#' \describe{
+#'   \item{\code{input$<outputId>_config}}{Fires when the user changes the
+#'     viewer configuration (columns, pivots, filters, etc.).}
+#'   \item{\code{input$<outputId>_click}}{Fires when the user clicks a cell
+#'     or data point.}
+#'   \item{\code{input$<outputId>_select}}{Fires when the user selects rows
+#'     or data points.}
+#'   \item{\code{input$<outputId>_update}}{Fires on each table data change
+#'     when subscribed via \code{\link{psp_on_update}}.}
+#'   \item{\code{input$<outputId>_export}}{Contains exported data after
+#'     calling \code{\link{psp_export}}.}
+#'   \item{\code{input$<outputId>_state}}{Contains saved viewer state after
+#'     calling \code{\link{psp_save}}.}
+#' }
 #'
 #' @return An htmlwidgets object that can be printed, included in R Markdown,
 #'   Quarto documents, or Shiny apps.
@@ -80,6 +104,7 @@ perspective <- function(data,
                         settings = TRUE,
                         title = NULL,
                         editable = FALSE,
+                        index = NULL,
                         use_arrow = FALSE,
                         width = NULL,
                         height = NULL,
@@ -91,6 +116,16 @@ perspective <- function(data,
   }
   if (is.matrix(data)) {
     data <- as.data.frame(data)
+  }
+
+  # Validate index
+  if (!is.null(index)) {
+    if (!is.character(index) || length(index) != 1L) {
+      stop("`index` must be a single character string.", call. = FALSE)
+    }
+    if (!index %in% names(data)) {
+      stop(sprintf("`index` column '%s' not found in `data`.", index), call. = FALSE)
+    }
   }
 
   # Serialize data
@@ -123,6 +158,7 @@ perspective <- function(data,
     config = config,
     theme = theme
   )
+  if (!is.null(index)) x$index <- index
 
   # Create widget
   htmlwidgets::createWidget(

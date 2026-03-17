@@ -39,7 +39,7 @@ perspective(iris,
 - **12+ visualization types**: Datagrid, bar, line, area, scatter, heatmap, treemap, sunburst, and more
 - **Self-service interactive UI**: Drag-and-drop columns, switch chart types, add filters/sorts/pivots, create computed expressions
 - **High performance**: WebAssembly-powered compute engine runs entirely in the browser
-- **Shiny integration**: Output/render bindings plus proxy interface for streaming data updates
+- **Shiny integration**: Output/render bindings plus proxy interface for streaming data updates, indexed/keyed tables, data export, and state save/restore
 - **Arrow IPC support**: Optional `arrow` package integration for efficient serialization of large datasets
 - **Works everywhere**: RStudio Viewer, R Markdown, Quarto, and Shiny
 
@@ -86,11 +86,15 @@ shinyApp(ui, server)
 
 ### Proxy Functions
 
-- `psp_update(proxy, data)` — append new rows
+- `psp_update(proxy, data)` — append new rows (upserts when table has an index)
 - `psp_replace(proxy, data)` — replace all data
 - `psp_clear(proxy)` — clear all rows
 - `psp_restore(proxy, config)` — apply a saved config
 - `psp_reset(proxy)` — reset viewer to defaults
+- `psp_remove(proxy, keys)` — remove rows by primary key (indexed tables)
+- `psp_export(proxy, format)` — export data (JSON, CSV, columns, or Arrow)
+- `psp_save(proxy)` — retrieve current viewer state
+- `psp_on_update(proxy, enable)` — subscribe to data change events
 
 ## Building the JS Bundle
 

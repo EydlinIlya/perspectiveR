@@ -19,6 +19,21 @@ A Shiny output element.
 \description{
 Creates a Perspective viewer output element for use in a Shiny UI.
 }
+\details{
+The following reactive inputs are available (where \code{outputId} is the
+ID you supply):
+\describe{
+\item{\code{input$<outputId>_config}}{Viewer configuration changes.}
+\item{\code{input$<outputId>_click}}{Cell/data-point click events.}
+\item{\code{input$<outputId>_select}}{Row/data-point selection events.}
+\item{\code{input$<outputId>_update}}{Table data changes (requires
+\code{\link{psp_on_update}}).}
+\item{\code{input$<outputId>_export}}{Exported data (after
+\code{\link{psp_export}}).}
+\item{\code{input$<outputId>_state}}{Saved viewer state (after
+\code{\link{psp_save}}).}
+}
+}
 \examples{
 \dontrun{
 library(shiny)

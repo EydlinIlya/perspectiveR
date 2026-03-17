@@ -57,6 +57,7 @@ Users can still modify the view interactively even after initial configuration.
 - `"Datagrid"` — interactive data grid (default)
 - `"Y Bar"` / `"X Bar"` — vertical / horizontal bar charts
 - `"Y Line"` — line chart
+- `"X/Y Line"` — line chart with explicit X axis
 - `"Y Area"` — area chart
 - `"Y Scatter"` / `"XY Scatter"` — scatter plots
 - `"Treemap"` — treemap
@@ -129,8 +130,92 @@ shinyApp(ui, server)
 
 ### Proxy Functions
 
-- `psp_update(proxy, data)` — append new rows
+- `psp_update(proxy, data)` — append new rows (upserts when table has an index)
 - `psp_replace(proxy, data)` — replace all data
 - `psp_clear(proxy)` — clear all rows
 - `psp_restore(proxy, config)` — apply a config
 - `psp_reset(proxy)` — reset to defaults
+- `psp_remove(proxy, keys)` — remove rows by primary key (indexed tables only)
+- `psp_export(proxy, format)` — export data as JSON, CSV, columns, or Arrow
+- `psp_save(proxy)` — retrieve current viewer state
+- `psp_on_update(proxy, enable)` — subscribe/unsubscribe to data change events
+
+## Indexed Tables
+
+Use the `index` parameter to create a keyed table. When an index is set,
+`psp_update()` performs upserts—rows with matching keys are updated instead of
+appended—and `psp_remove()` can delete rows by key.
+
+```{r indexed, eval=FALSE}
+# Create an indexed table keyed on "cyl"
+perspective(mtcars, index = "cyl", plugin = "Datagrid")
+
+# In a Shiny server:
+proxy <- perspectiveProxy(session, "viewer")
+psp_update(proxy, updated_rows)   # upserts by "cyl"
+psp_remove(proxy, keys = c(4, 8)) # remove rows where cyl == 4 or 8
+```
+
+## Exporting Data
+
+Request the current view's data from the browser:
+
+```{r export, eval=FALSE}
+proxy <- perspectiveProxy(session, "viewer")
+psp_export(proxy, format = "csv")
+
+# Result arrives asynchronously:
+observeEvent(input$viewer_export, {
+  cat("Format:", input$viewer_export$format, "\n")
+  cat("Data:", input$viewer_export$data, "\n")
+})
+```
+
+Supported formats: `"json"`, `"csv"`, `"columns"`, `"arrow"` (base64-encoded).
+
+## Saving and Restoring State
+
+Retrieve the current viewer configuration and restore it later:
+
+```{r save-restore, eval=FALSE}
+proxy <- perspectiveProxy(session, "viewer")
+
+# Save current state
+psp_save(proxy)
+observeEvent(input$viewer_state, {
+  saved <- input$viewer_state
+  # Later, restore it:
+  psp_restore(proxy, saved)
+})
+```
+
+## Update Notifications
+
+Subscribe to table data changes to react when data is updated:
+
+```{r on-update, eval=FALSE}
+proxy <- perspectiveProxy(session, "viewer")
+psp_on_update(proxy, enable = TRUE)
+
+observeEvent(input$viewer_update, {
+  info <- input$viewer_update
+  message("Update at ", info$timestamp, " from ", info$source)
+})
+
+# To unsubscribe:
+psp_on_update(proxy, enable = FALSE)
+```
+
+## Themes
+
+Set the visual theme with the `theme` parameter:
+
+```{r themes, eval=FALSE}
+perspective(mtcars, theme = "Pro Dark")
+perspective(mtcars, theme = "Dracula")
+perspective(mtcars, theme = "Gruvbox Dark")
+```
+
+Available themes: `"Pro Light"` (default), `"Pro Dark"`, `"Monokai"`,
+`"Solarized Light"`, `"Solarized Dark"`, `"Vaporwave"`, `"Dracula"`,
+`"Gruvbox"`, `"Gruvbox Dark"`.

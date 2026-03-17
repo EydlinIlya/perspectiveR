@@ -31,8 +31,18 @@ function base64ToArrayBuffer(base64) {
   return bytes.buffer;
 }
 
+// ---- Base64 encode helper for Arrow export ----
+function arrayBufferToBase64(buffer) {
+  var bytes = new Uint8Array(buffer);
+  var binary = "";
+  for (var i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 // ---- Proxy message processing ----
-async function processProxyMessage(viewer, table, msg) {
+async function processProxyMessage(el, viewer, table, msg) {
   switch (msg.method) {
     case "update":
       var updateData;
@@ -67,6 +77,85 @@ async function processProxyMessage(viewer, table, msg) {
 
     case "reset":
       await viewer.load(table);
+      break;
+
+    case "remove":
+      if (msg.keys) {
+        await table.remove(msg.keys);
+      }
+      break;
+
+    case "export":
+      var view = await viewer.getView();
+      var exportData;
+      var format = msg.format || "json";
+      if (format === "csv") {
+        exportData = await view.to_csv();
+      } else if (format === "columns") {
+        exportData = await view.to_columns();
+      } else if (format === "arrow") {
+        var arrowBuf = await view.to_arrow();
+        exportData = arrayBufferToBase64(arrowBuf);
+      } else {
+        exportData = await view.to_json();
+      }
+      if (HTMLWidgets.shinyMode) {
+        Shiny.setInputValue(el.id + "_export", {
+          format: format,
+          data: exportData,
+        }, { priority: "event" });
+      }
+      break;
+
+    case "save":
+      var state = await viewer.save();
+      if (HTMLWidgets.shinyMode) {
+        Shiny.setInputValue(el.id + "_state", state, {
+          priority: "event",
+        });
+      }
+      break;
+
+    case "on_update":
+      if (msg.enable) {
+        // Remove existing callback if any
+        if (el.__pspUpdateCallback) {
+          table.remove_update(el.__pspUpdateCallback);
+          el.__pspUpdateCallback = null;
+        }
+        var callback = async function (updated) {
+          var payload = {
+            timestamp: Date.now(),
+            port_id: updated.port_id,
+            source: updated.port_id > 0 ? "edit" : "api",
+          };
+          if (updated.port_id > 0 && updated.delta) {
+            // Decode Arrow delta for edit events
+            try {
+              var worker = el.__pspWorker;
+              var tmpTable = await worker.table(updated.delta);
+              var tmpView = await tmpTable.view();
+              payload.delta = await tmpView.to_json();
+              tmpView.delete();
+              tmpTable.delete();
+            } catch (e) {
+              // If delta decode fails, send without it
+            }
+          }
+          if (HTMLWidgets.shinyMode) {
+            Shiny.setInputValue(el.id + "_update", payload, {
+              priority: "event",
+            });
+          }
+        };
+        el.__pspUpdateCallback = callback;
+        table.on_update(callback, { mode: "row" });
+      } else {
+        if (el.__pspUpdateCallback) {
+          table.remove_update(el.__pspUpdateCallback);
+          el.__pspUpdateCallback = null;
+        }
+      }
       break;
   }
 }
@@ -113,16 +202,19 @@ HTMLWidgets.widget({
         // If a schema is provided (from R type detection), create a typed
         // table first so Perspective knows date/datetime column types
         // rather than inferring them as strings.
+        var tableOpts = {};
+        if (x.index) tableOpts.index = x.index;
+
         if (x.data_format !== "arrow" && x.schema) {
           var pspSchema = {};
           var schemaKeys = Object.keys(x.schema);
           for (var si = 0; si < schemaKeys.length; si++) {
             pspSchema[schemaKeys[si]] = x.schema[schemaKeys[si]];
           }
-          table = await worker.table(pspSchema);
+          table = await worker.table(pspSchema, tableOpts);
           await table.update(tableData);
         } else {
-          table = await worker.table(tableData);
+          table = await worker.table(tableData, tableOpts);
         }
 
         // Load table into viewer
@@ -163,6 +255,11 @@ HTMLWidgets.widget({
           viewer.setAttribute("editable", "");
         }
 
+        // Apply theme via attribute
+        if (x.theme) {
+          viewer.setAttribute("theme", x.theme);
+        }
+
         // ---- Shiny event forwarding ----
         if (HTMLWidgets.shinyMode) {
           // Forward config changes to R
@@ -180,6 +277,13 @@ HTMLWidgets.widget({
               priority: "event",
             });
           });
+
+          // Forward select events to R
+          viewer.addEventListener("perspective-select", function (event) {
+            Shiny.setInputValue(el.id + "_select", event.detail, {
+              priority: "event",
+            });
+          });
         }
 
         // Store references on the element for proxy access
@@ -192,7 +296,7 @@ HTMLWidgets.widget({
           var pending = el.__pspPendingMsgs;
           el.__pspPendingMsgs = [];
           for (var pi = 0; pi < pending.length; pi++) {
-            await processProxyMessage(viewer, table, pending[pi]);
+            await processProxyMessage(el, viewer, table, pending[pi]);
           }
         }
       },
@@ -227,6 +331,6 @@ if (HTMLWidgets.shinyMode) {
       return;
     }
 
-    processProxyMessage(el.__pspViewer, el.__pspTable, msg);
+    processProxyMessage(el, el.__pspViewer, el.__pspTable, msg);
   });
 }

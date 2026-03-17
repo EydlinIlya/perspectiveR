@@ -19,6 +19,7 @@ perspective(
   settings = TRUE,
   title = NULL,
   editable = FALSE,
+  index = NULL,
   use_arrow = FALSE,
   width = NULL,
   height = NULL,
@@ -54,15 +55,16 @@ For example: \code{list(mpg = "avg", hp = "sum")}.}
 
 \item{plugin}{Character string specifying the visualization plugin.
 Options include: \code{"Datagrid"}, \code{"Y Bar"}, \code{"X Bar"},
-\code{"Y Line"}, \code{"Y Area"}, \code{"Y Scatter"}, \code{"XY Scatter"},
-\code{"Treemap"}, \code{"Sunburst"}, \code{"Heatmap"}.}
+\code{"Y Line"}, \code{"X/Y Line"}, \code{"Y Area"}, \code{"Y Scatter"},
+\code{"XY Scatter"}, \code{"Treemap"}, \code{"Sunburst"}, \code{"Heatmap"}.}
 
 \item{plugin_config}{A list of plugin-specific configuration options.}
 
 \item{theme}{Character string specifying the CSS theme. Options:
 \code{"Pro Light"}, \code{"Pro Dark"}, \code{"Monokai"},
 \code{"Solarized Light"}, \code{"Solarized Dark"},
-\code{"Vaporwave"}. Default is \code{"Pro Light"}.}
+\code{"Vaporwave"}, \code{"Dracula"}, \code{"Gruvbox"},
+\code{"Gruvbox Dark"}. Default is \code{"Pro Light"}.}
 
 \item{settings}{Logical; whether to show the settings/configuration panel
 sidebar. Default \code{TRUE}. This is the interactive UI where users
@@ -73,6 +75,12 @@ is shown.}
 
 \item{editable}{Logical; whether the data in the grid is user-editable.
 Default \code{FALSE}.}
+
+\item{index}{Character string naming a column to use as the table's primary
+key. When set, \code{psp_update()} performs upserts (matching rows are
+updated instead of appended) and \code{psp_remove()} can delete rows by
+key. Must be the name of a column present in \code{data}. Default
+\code{NULL} (no index).}
 
 \item{use_arrow}{Logical; if \code{TRUE}, serialize data using Arrow IPC
 format (base64-encoded) for better performance with large datasets.
@@ -93,6 +101,24 @@ Creates an interactive pivot table and visualization widget powered by the
 FINOS Perspective library. The viewer provides a self-service UI where users
 can interactively change chart types, group/split/filter/sort data, create
 computed columns, and configure aggregations.
+}
+\details{
+When used in a Shiny app, the following reactive inputs are available
+(where \code{outputId} is the ID passed to \code{\link{perspectiveOutput}}):
+\describe{
+\item{\code{input$<outputId>_config}}{Fires when the user changes the
+viewer configuration (columns, pivots, filters, etc.).}
+\item{\code{input$<outputId>_click}}{Fires when the user clicks a cell
+or data point.}
+\item{\code{input$<outputId>_select}}{Fires when the user selects rows
+or data points.}
+\item{\code{input$<outputId>_update}}{Fires on each table data change
+when subscribed via \code{\link{psp_on_update}}.}
+\item{\code{input$<outputId>_export}}{Contains exported data after
+calling \code{\link{psp_export}}.}
+\item{\code{input$<outputId>_state}}{Contains saved viewer state after
+calling \code{\link{psp_save}}.}
+}
 }
 \examples{
 # Basic data grid

@@ -119,3 +119,23 @@ test_that("NULL config options are excluded", {
   expect_null(w$x$config$filter)
   expect_null(w$x$config$plugin)
 })
+
+test_that("index is included in widget payload", {
+  w <- perspective(mtcars, index = "mpg")
+  expect_equal(w$x$index, "mpg")
+})
+
+test_that("NULL index is excluded from payload", {
+  w <- perspective(mtcars)
+  expect_null(w$x$index)
+})
+
+test_that("index must be a single character string", {
+  expect_error(perspective(mtcars, index = 123), "single character string")
+  expect_error(perspective(mtcars, index = c("mpg", "cyl")), "single character string")
+  expect_error(perspective(mtcars, index = TRUE), "single character string")
+})
+
+test_that("index must name a column in data", {
+  expect_error(perspective(mtcars, index = "nonexistent"), "not found in `data`")
+})
