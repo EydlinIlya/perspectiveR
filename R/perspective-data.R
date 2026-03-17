@@ -119,7 +119,7 @@
   # Write to raw bytes using Arrow IPC stream format
   buf <- arrow::BufferOutputStream$create()
   arrow::write_ipc_stream(data, buf)
-  raw_bytes <- buf$finish()
+  raw_bytes <- as.raw(buf$finish())
 
   # Base64 encode
   b64 <- base64enc_raw(raw_bytes)
