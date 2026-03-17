@@ -117,7 +117,7 @@
   }
 
   # Write to raw bytes using Arrow IPC stream format
-  buf <- arrow::buffer_output_stream()
+  buf <- arrow::BufferOutputStream$create()
   arrow::write_ipc_stream(data, buf)
   raw_bytes <- buf$finish()
 
