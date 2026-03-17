@@ -21,9 +21,13 @@ ui <- fluidPage(
       ),
       actionButton("start_over", "Start Over", class = "btn-primary"),
       hr(),
+      checkboxInput("use_arrow", "Use Arrow IPC serialization",
+        value = requireNamespace("arrow", quietly = TRUE)
+      ),
       helpText(
         "EU stock indices streamed row by row.",
-        "Drag columns in the viewer to compare indices."
+        "Drag columns in the viewer to compare indices.",
+        "Toggle Arrow IPC for faster serialization (requires arrow package)."
       )
     ),
     mainPanel(
@@ -56,13 +60,13 @@ server <- function(input, output, session) {
   observeEvent(input$year, {
     current_row(1)
     proxy <- perspectiveProxy(session, "viewer")
-    psp_replace(proxy, year_data()[1, ])
+    psp_replace(proxy, year_data()[1, ], use_arrow = input$use_arrow)
   }, ignoreInit = TRUE)
 
   observeEvent(input$start_over, {
     current_row(1)
     proxy <- perspectiveProxy(session, "viewer")
-    psp_replace(proxy, year_data()[1, ])
+    psp_replace(proxy, year_data()[1, ], use_arrow = input$use_arrow)
   })
 
   # Stream one row per second, sliding window after WINDOW_SIZE
@@ -71,6 +75,7 @@ server <- function(input, output, session) {
 
     data <- isolate(year_data())
     pos <- isolate(current_row())
+    arrow <- isolate(input$use_arrow)
     if (pos >= nrow(data)) return()
 
     new_pos <- pos + 1
@@ -78,7 +83,7 @@ server <- function(input, output, session) {
 
     start <- max(1, new_pos - WINDOW_SIZE + 1)
     proxy <- perspectiveProxy(session, "viewer")
-    psp_replace(proxy, data[start:new_pos, ])
+    psp_replace(proxy, data[start:new_pos, ], use_arrow = arrow)
   })
 }
 
