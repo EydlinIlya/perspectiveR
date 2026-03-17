@@ -1,3 +1,5 @@
+<img src="man/figures/logo.png" align="right" height="139" alt="peRspective logo" />
+
 # peRspective
 
 R htmlwidgets binding for the [FINOS Perspective](https://perspective.finos.org/) library -- a high-performance WebAssembly-powered data visualization engine with interactive pivot tables and 12+ chart types.
