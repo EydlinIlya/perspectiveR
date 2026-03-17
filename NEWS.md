@@ -23,7 +23,7 @@
 # peRspective 0.1.0
 
 * Initial release.
-* `perspective()` widget with support for 14 chart types.
+* `perspective()` widget with support for multiple chart types.
 * Shiny integration via `perspectiveOutput()`, `renderPerspective()`, and
   `perspectiveProxy()`.
 * Proxy functions: `psp_update()`, `psp_replace()`, `psp_clear()`,

@@ -8,7 +8,7 @@
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-R htmlwidgets binding for the [FINOS Perspective](https://perspective.finos.org/) library -- a high-performance WebAssembly-powered data visualization engine with interactive pivot tables and 14 chart types.
+R htmlwidgets binding for the [FINOS Perspective](https://perspective.finos.org/) library -- a high-performance WebAssembly-powered data visualization engine with interactive pivot tables and multiple chart types.
 
 ## Installation
 
@@ -44,7 +44,7 @@ perspective(iris,
 
 ## Features
 
-- **14 visualization types**: Datagrid, bar, line, area, scatter, heatmap, treemap, sunburst, OHLC, candlestick, and more
+- **Multiple visualization types**: Datagrid, bar, line, area, scatter, heatmap, treemap, sunburst, and more
 - **Self-service interactive UI**: Drag-and-drop columns, switch chart types, add filters/sorts/pivots, create computed expressions
 - **High performance**: WebAssembly-powered compute engine runs entirely in the browser
 - **Shiny integration**: Output/render bindings plus proxy interface for streaming data updates, indexed/keyed tables, rolling-window tables (`limit`), data export, table metadata queries, and state save/restore

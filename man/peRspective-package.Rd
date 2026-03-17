@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-An 'htmlwidgets' binding for the 'FINOS Perspective' \url{https://perspective.finos.org/} library, a high-performance WebAssembly-powered data visualization engine. Provides interactive pivot tables, cross-tabulations, and 14 chart types (bar, line, scatter, heatmap, treemap, sunburst, and more) that run entirely in the browser. Supports self-service analytics with drag-and-drop column selection, group-by/split-by pivoting, filtering, sorting, aggregation, and computed expressions. Works in 'RStudio' Viewer, 'R Markdown', 'Quarto', and 'Shiny' with streaming data updates via proxy interface.
+An 'htmlwidgets' binding for the 'FINOS Perspective' \url{https://perspective.finos.org/} library, a high-performance WebAssembly-powered data visualization engine. Provides interactive pivot tables, cross-tabulations, and multiple chart types (bar, line, scatter, heatmap, treemap, sunburst, and more) that run entirely in the browser. Supports self-service analytics with drag-and-drop column selection, group-by/split-by pivoting, filtering, sorting, aggregation, and computed expressions. Works in 'RStudio' Viewer, 'R Markdown', 'Quarto', and 'Shiny' with streaming data updates via proxy interface.
 }
 \seealso{
 Useful links:

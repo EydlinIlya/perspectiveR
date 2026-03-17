@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-peRspective provides an R interface to the [FINOS Perspective](https://perspective.finos.org/) library, a high-performance WebAssembly-powered data visualization engine. It offers interactive pivot tables, cross-tabulations, and 14 chart types that run entirely in the browser.
+peRspective provides an R interface to the [FINOS Perspective](https://perspective.finos.org/) library, a high-performance WebAssembly-powered data visualization engine. It offers interactive pivot tables, cross-tabulations, and multiple chart types that run entirely in the browser.
 
 ## Quick Start
 
