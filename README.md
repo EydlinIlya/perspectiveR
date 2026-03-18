@@ -4,7 +4,6 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/EydlinIlya/peRspective/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EydlinIlya/peRspective/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/EydlinIlya/peRspective/graph/badge.svg)](https://codecov.io/gh/EydlinIlya/peRspective)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
@@ -111,7 +110,7 @@ shinyApp(ui, server)
 
 ## Related Projects
 
-- [Perspective](https://github.com/finos/perspective) — the upstream WebAssembly data visualization engine this package wraps
+- [Perspective](https://github.com/perspective-dev/perspective) — the upstream WebAssembly data visualization engine this package wraps
 - [GWalkR](https://github.com/Kanaries/GWalkR) — interactive data exploration widget powered by Graphic Walker
 - [esquisse](https://github.com/dreamRs/esquisse) — drag-and-drop ggplot2 builder as a Shiny module
 
