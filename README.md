@@ -1,9 +1,9 @@
-<img src="man/figures/logo.png" align="right" height="139" alt="peRspective logo" />
+<img src="man/figures/logo.png" align="right" height="139" alt="perspectiveR logo" />
 
-# peRspective
+# perspectiveR
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/EydlinIlya/peRspective/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EydlinIlya/peRspective/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/EydlinIlya/perspectiveR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EydlinIlya/perspectiveR/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
@@ -13,19 +13,19 @@ R htmlwidgets binding for the [FINOS Perspective](https://perspective-dev.github
 
 ```r
 # Install from GitHub
-remotes::install_github("EydlinIlya/peRspective")
+remotes::install_github("EydlinIlya/perspectiveR")
 
 # Or using pak
-pak::pak("EydlinIlya/peRspective")
+pak::pak("EydlinIlya/perspectiveR")
 
 # Or using devtools
-devtools::install_github("EydlinIlya/peRspective")
+devtools::install_github("EydlinIlya/perspectiveR")
 ```
 
 ## Quick Start
 
 ```r
-library(peRspective)
+library(perspectiveR)
 
 # Interactive data grid with full self-service UI
 perspective(mtcars)
@@ -56,7 +56,7 @@ perspective(iris,
 Two interactive demos are bundled with the package:
 
 ```r
-library(peRspective)
+library(perspectiveR)
 run_example()             # list all available demos
 run_example("shiny-basic")
 run_example("crud-table")
@@ -69,7 +69,7 @@ run_example("crud-table")
 
 ```r
 library(shiny)
-library(peRspective)
+library(perspectiveR)
 
 ui <- fluidPage(
   selectInput("dataset", "Dataset:",
@@ -129,4 +129,4 @@ npm run copy-themes
 
 Apache License 2.0
 
-*'Perspective' is a project of the [OpenJS Foundation](https://openjsf.org/). peRspective is an independent community package and is not affiliated with or endorsed by the OpenJS Foundation.*
+*'Perspective' is a project of the [OpenJS Foundation](https://openjsf.org/). perspectiveR is an independent community package and is not affiliated with or endorsed by the OpenJS Foundation.*

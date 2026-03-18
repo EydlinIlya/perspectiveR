@@ -4,9 +4,9 @@
 #' @importFrom htmltools tags
 NULL
 
-#' Run a peRspective Example App
+#' Run a perspectiveR Example App
 #'
-#' Launches a bundled Shiny example app demonstrating the peRspective widget.
+#' Launches a bundled Shiny example app demonstrating the perspectiveR widget.
 #'
 #' @param example Name of the example to run. Use \code{NULL} (default) to list
 #'   available examples.
@@ -23,18 +23,18 @@ NULL
 #'
 #' @export
 run_example <- function(example = NULL, ...) {
-  examples_dir <- system.file("examples", package = "peRspective")
+  examples_dir <- system.file("examples", package = "perspectiveR")
   all_dirs <- list.dirs(examples_dir, full.names = FALSE, recursive = FALSE)
   available <- all_dirs[file.exists(file.path(examples_dir, all_dirs, "app.R"))]
 
   if (is.null(example)) {
-    message("Available peRspective examples:\n",
+    message("Available perspectiveR examples:\n",
             paste(" ", available, collapse = "\n"),
             "\n\nRun one with: run_example(\"", available[1], "\")")
     return(invisible(available))
   }
 
-  app_dir <- system.file("examples", example, package = "peRspective")
+  app_dir <- system.file("examples", example, package = "perspectiveR")
   if (app_dir == "") {
     stop("Example '", example, "' not found. Available: ",
          paste(available, collapse = ", "), call. = FALSE)

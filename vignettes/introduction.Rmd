@@ -1,8 +1,8 @@
 ---
-title: "Introduction to peRspective"
+title: "Introduction to perspectiveR"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to peRspective}
+  %\VignetteIndexEntry{Introduction to perspectiveR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,12 +16,12 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-peRspective provides an R interface to the [FINOS Perspective](https://perspective-dev.github.io/) library, a high-performance WebAssembly-powered data visualization engine. It offers interactive pivot tables, cross-tabulations, and multiple chart types that run entirely in the browser.
+perspectiveR provides an R interface to the [FINOS Perspective](https://perspective-dev.github.io/) library, a high-performance WebAssembly-powered data visualization engine. It offers interactive pivot tables, cross-tabulations, and multiple chart types that run entirely in the browser.
 
 ## Quick Start
 
 ```{r setup}
-library(peRspective)
+library(perspectiveR)
 ```
 
 The simplest usage is to pass a data frame directly:
@@ -98,7 +98,7 @@ perspective(big_data, use_arrow = TRUE)
 
 ## Shiny Integration
 
-peRspective includes full Shiny support with a proxy interface for streaming updates:
+perspectiveR includes full Shiny support with a proxy interface for streaming updates:
 
 ```{r shiny, eval=FALSE}
 library(shiny)

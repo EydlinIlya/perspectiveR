@@ -1,4 +1,4 @@
-# Build script for peRspective JS assets
+# Build script for perspectiveR JS assets
 # Run from the package root directory:
 #   source("tools/build_js.R")
 

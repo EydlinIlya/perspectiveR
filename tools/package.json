@@ -2,7 +2,7 @@
   "name": "perspective-build-tools",
   "version": "0.1.0",
   "private": true,
-  "description": "Build tools for peRspective R package",
+  "description": "Build tools for perspectiveR R package",
   "scripts": {
     "build": "node esbuild.config.mjs",
     "copy-themes": "node copy-themes.mjs"

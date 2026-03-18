@@ -1,5 +1,5 @@
 library(shiny)
-library(peRspective)
+library(perspectiveR)
 
 # European stock market closing prices (1991-1998)
 stocks <- as.data.frame(EuStockMarkets)
@@ -24,7 +24,7 @@ build_expr <- function(expr_str) {
 }
 
 ui <- fluidPage(
-  titlePanel("peRspective Demo"),
+  titlePanel("perspectiveR Demo"),
   sidebarLayout(
     sidebarPanel(
       width = 3,

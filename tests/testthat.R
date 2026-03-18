@@ -1,4 +1,4 @@
 library(testthat)
-library(peRspective)
+library(perspectiveR)
 
-test_check("peRspective")
+test_check("perspectiveR")

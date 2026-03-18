@@ -207,7 +207,7 @@ perspective <- function(data,
     x = x,
     width = width,
     height = height,
-    package = "peRspective",
+    package = "perspectiveR",
     elementId = elementId,
     sizingPolicy = htmlwidgets::sizingPolicy(
       defaultWidth = "100%",

@@ -1,4 +1,4 @@
-# peRspective 0.3.0
+# perspectiveR 0.3.0
 
 * Added `psp_schema()`, `psp_size()`, `psp_columns()`, and
   `psp_validate_expressions()` proxy functions for table introspection.
@@ -10,7 +10,7 @@
 * Added three new demo apps: streaming stock market, editable table, and
   expression builder.
 
-# peRspective 0.2.0
+# perspectiveR 0.2.0
 
 * Added `index` parameter for keyed/indexed tables.
 * Added `psp_remove()` to delete rows by primary key.
@@ -20,7 +20,7 @@
 * Added `input$<outputId>_select` event for row/data-point selection.
 * Added theme support for dark mode and custom styling.
 
-# peRspective 0.1.0
+# perspectiveR 0.1.0
 
 * Initial release.
 * `perspective()` widget with support for multiple chart types.

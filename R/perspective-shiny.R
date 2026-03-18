@@ -44,7 +44,7 @@
 perspectiveOutput <- function(outputId, width = "100%", height = "400px") {
   htmlwidgets::shinyWidgetOutput(outputId, "perspective",
                                   width = width, height = height,
-                                  package = "peRspective")
+                                  package = "perspectiveR")
 }
 
 #' Render a Perspective Viewer in Shiny

@@ -83,7 +83,7 @@ test_that("JSON serialization handles factors", {
     y = factor(c("a", "b", "c")),
     stringsAsFactors = FALSE
   )
-  result <- peRspective:::.serialize_json(df)
+  result <- perspectiveR:::.serialize_json(df)
   expect_equal(result$format, "json")
   # Factor should be converted to character in JSON
   parsed <- jsonlite::fromJSON(result$data)
@@ -92,7 +92,7 @@ test_that("JSON serialization handles factors", {
 
 test_that("JSON serialization handles NA values", {
   df <- data.frame(x = c(1, NA, 3), y = c("a", "b", NA))
-  result <- peRspective:::.serialize_json(df)
+  result <- perspectiveR:::.serialize_json(df)
   expect_equal(result$format, "json")
   expect_true(grepl("null", result$data))
 })

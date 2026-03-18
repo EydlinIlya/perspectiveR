@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{run_example}
 \alias{run_example}
-\title{Run a peRspective Example App}
+\title{Run a perspectiveR Example App}
 \usage{
 run_example(example = NULL, ...)
 }
@@ -13,7 +13,7 @@ available examples.}
 \item{...}{Additional arguments passed to \code{\link[shiny]{runApp}}.}
 }
 \description{
-Launches a bundled Shiny example app demonstrating the peRspective widget.
+Launches a bundled Shiny example app demonstrating the perspectiveR widget.
 }
 \examples{
 # List available examples

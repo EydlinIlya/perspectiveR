@@ -1,4 +1,4 @@
-// peRspective htmlwidgets binding
+// perspectiveR htmlwidgets binding
 // Bridges htmlwidgets' synchronous pattern with Perspective's async ESM initialization
 
 // ---- Perspective Ready Promise ----

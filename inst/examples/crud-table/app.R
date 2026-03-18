@@ -1,5 +1,5 @@
 library(shiny)
-library(peRspective)
+library(perspectiveR)
 
 # Prepare mtcars with car names as a column (primary key)
 cars_data <- mtcars

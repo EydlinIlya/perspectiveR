@@ -1,4 +1,4 @@
-Package: peRspective
+Package: perspectiveR
 Type: Package
 Title: Interactive Pivot Tables and Visualizations with 'Perspective'
 Version: 0.3.0
@@ -15,8 +15,8 @@ Description: An 'htmlwidgets' binding for the 'FINOS Perspective'
     expressions. Works in 'RStudio' Viewer, 'R Markdown', 'Quarto', and
     'Shiny' with streaming data updates via proxy interface.
 License: Apache License 2.0 | file LICENSE
-URL: https://github.com/EydlinIlya/peRspective
-BugReports: https://github.com/EydlinIlya/peRspective/issues
+URL: https://github.com/EydlinIlya/perspectiveR
+BugReports: https://github.com/EydlinIlya/perspectiveR/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
