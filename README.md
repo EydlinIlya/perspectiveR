@@ -1,9 +1,10 @@
-<img src="man/figures/logo.png?raw=true" align="right" height="139" alt="perspectiveR logo" />
+<img src="man/figures/logo-perspectiveR.png" align="right" height="139" alt="perspectiveR logo" />
 
 # perspectiveR
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/EydlinIlya/perspectiveR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EydlinIlya/perspectiveR/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/EydlinIlya/perspectiveR/graph/badge.svg)](https://app.codecov.io/gh/EydlinIlya/perspectiveR)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
