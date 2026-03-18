@@ -54,19 +54,17 @@ perspective(iris,
 
 ## Shiny Demos
 
-Three interactive demos are bundled with the package:
+Two interactive demos are bundled with the package:
 
 ```r
 library(peRspective)
 run_example()             # list all available demos
 run_example("shiny-basic")
 run_example("crud-table")
-run_example("data-explorer")
 ```
 
-- **shiny-basic** — Streaming stock market line chart (DAX, SMI, CAC, FTSE 1991-1998) with a 100-row sliding window, Arrow IPC toggle, expression validation, and named state save/restore.
+- **shiny-basic** — Streaming stock market line chart (DAX, SMI, CAC, FTSE 1991-1998) with a 100-row sliding window, Arrow IPC toggle, computed columns, and named state save/restore.
 - **crud-table** — Editable indexed CRUD table with click events, add/update/delete rows by key, downloadable CSV/JSON export, and an update activity log.
-- **data-explorer** — Table introspection on `airquality` with rolling-window streaming, downloadable windowed export, and metadata queries (schema/size/columns).
 
 ### Shiny Usage
 

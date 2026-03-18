@@ -119,6 +119,12 @@ perspectiveProxy <- function(session, outputId) {
 #'
 #' @return The proxy object (invisibly), for chaining.
 #'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_update(proxy, new_data)
+#' }
+#'
 #' @export
 psp_update <- function(proxy, data, use_arrow = FALSE) {
   .validate_proxy(proxy)
@@ -135,6 +141,12 @@ psp_update <- function(proxy, data, use_arrow = FALSE) {
 #' @param use_arrow Logical; use Arrow IPC serialization. Default \code{FALSE}.
 #'
 #' @return The proxy object (invisibly), for chaining.
+#'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_replace(proxy, updated_data)
+#' }
 #'
 #' @export
 psp_replace <- function(proxy, data, use_arrow = FALSE) {
@@ -173,6 +185,12 @@ psp_clear <- function(proxy) {
 #'
 #' @return The proxy object (invisibly), for chaining.
 #'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_restore(proxy, list(plugin = "Y Bar", group_by = list("cyl")))
+#' }
+#'
 #' @export
 psp_restore <- function(proxy, config) {
   .validate_proxy(proxy)
@@ -186,6 +204,12 @@ psp_restore <- function(proxy, config) {
 #' @param proxy A \code{\link{perspectiveProxy}} object.
 #'
 #' @return The proxy object (invisibly), for chaining.
+#'
+#' @examples
+#' \dontrun{
+#' proxy <- perspectiveProxy(session, "viewer")
+#' psp_reset(proxy)
+#' }
 #'
 #' @export
 psp_reset <- function(proxy) {

@@ -19,3 +19,10 @@ The proxy object (invisibly), for chaining.
 \description{
 Replaces the entire dataset in the Perspective table.
 }
+\examples{
+\dontrun{
+proxy <- perspectiveProxy(session, "viewer")
+psp_replace(proxy, updated_data)
+}
+
+}

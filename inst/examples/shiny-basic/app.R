@@ -10,7 +10,13 @@ available_years <- sort(unique(stocks$Year))
 
 WINDOW_SIZE <- 100
 
-# Helper to build expression object (mirrors internal .build_expressions)
+# Pre-defined computed columns users can add via button
+computed_columns <- list(
+  "DAX vs SMI" = '"DAX" - "SMI"',
+  "Average Index" = '("DAX" + "SMI" + "CAC" + "FTSE") / 4'
+)
+
+# Helper to build expression object
 build_expr <- function(expr_str) {
   result <- as.list(expr_str)
   names(result) <- expr_str
@@ -33,17 +39,12 @@ ui <- fluidPage(
       ),
 
       hr(),
-      h4("Expressions"),
-      textInput("expr_input", "Expression:",
-        placeholder = '// DAX in USD\n"DAX" * 0.6'
+      h4("Computed Columns"),
+      selectInput("computed_col", "Add column:",
+        choices = names(computed_columns)
       ),
-      helpText(
-        'Examples: "DAX" * 0.6, "SMI" - "DAX",',
-        'if("DAX" > 3000) "High" else "Low"'
-      ),
-      actionButton("validate_expr", "Validate"),
-      actionButton("add_expr", "Add to View", class = "btn-primary"),
-      verbatimTextOutput("validation_result"),
+      actionButton("add_column", "Add to View", class = "btn-primary"),
+      helpText("Adds a computed column via Perspective expressions."),
 
       hr(),
       h4("Named States"),
@@ -69,7 +70,6 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   current_row <- reactiveVal(1)
-  validation_text <- reactiveVal(NULL)
   saved_states <- reactiveVal(list())
   pending_name <- reactiveVal(NULL)
   state_msg <- reactiveVal("")
@@ -118,27 +118,11 @@ server <- function(input, output, session) {
     psp_update(proxy(), data[new_pos, ], use_arrow = isolate(input$use_arrow))
   })
 
-  # Validate expression
-  observeEvent(input$validate_expr, {
-    req(nzchar(input$expr_input))
-    psp_validate_expressions(proxy(), input$expr_input)
-    validation_text("Validating...")
-  })
-
-  observeEvent(input$viewer_validate_expressions, {
-    result <- input$viewer_validate_expressions
-    if (is.null(result)) return()
-    validation_text(
-      paste(utils::capture.output(utils::str(result, max.level = 3)), collapse = "\n")
-    )
-  })
-
-  output$validation_result <- renderText(validation_text())
-
-  # Add expression to view
-  observeEvent(input$add_expr, {
-    req(nzchar(input$expr_input))
-    psp_restore(proxy(), list(expressions = build_expr(input$expr_input)))
+  # Add pre-defined computed column
+  observeEvent(input$add_column, {
+    expr <- computed_columns[[input$computed_col]]
+    req(expr)
+    psp_restore(proxy(), list(expressions = build_expr(expr)))
   })
 
   # Save named state

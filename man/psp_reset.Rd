@@ -15,3 +15,10 @@ The proxy object (invisibly), for chaining.
 \description{
 Resets the Perspective viewer to its default configuration.
 }
+\examples{
+\dontrun{
+proxy <- perspectiveProxy(session, "viewer")
+psp_reset(proxy)
+}
+
+}

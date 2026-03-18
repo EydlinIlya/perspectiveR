@@ -21,3 +21,5 @@ inst/htmlwidgets/lib/perspective-3.8.0/perspective-all.mjs
 Thumbs.db
 /doc/
 /Meta/
+inst/doc/
+cran-comments.md

@@ -159,11 +159,13 @@ async function processProxyMessage(el, viewer, table, msg) {
 
     case "on_update":
       if (msg.enable) {
-        // Remove existing callback if any
-        if (el.__pspUpdateCallback) {
-          table.remove_update(el.__pspUpdateCallback);
-          el.__pspUpdateCallback = null;
+        // Remove existing subscription if any
+        if (el.__pspUpdateId != null && el.__pspUpdateView) {
+          el.__pspUpdateView.remove_update(el.__pspUpdateId);
+          el.__pspUpdateId = null;
+          el.__pspUpdateView = null;
         }
+        var updateView = await viewer.getView();
         var callback = function (updated) {
           var payload = {
             timestamp: Date.now(),
@@ -176,12 +178,13 @@ async function processProxyMessage(el, viewer, table, msg) {
             });
           }
         };
-        el.__pspUpdateCallback = callback;
-        table.on_update(callback);
+        el.__pspUpdateView = updateView;
+        el.__pspUpdateId = await updateView.on_update(callback);
       } else {
-        if (el.__pspUpdateCallback) {
-          table.remove_update(el.__pspUpdateCallback);
-          el.__pspUpdateCallback = null;
+        if (el.__pspUpdateId != null && el.__pspUpdateView) {
+          el.__pspUpdateView.remove_update(el.__pspUpdateId);
+          el.__pspUpdateId = null;
+          el.__pspUpdateView = null;
         }
       }
       break;
