@@ -1,4 +1,4 @@
-<img src="man/figures/logo.png" align="right" height="139" alt="perspectiveR logo" />
+<img src="man/figures/logo.png?raw=true" align="right" height="139" alt="perspectiveR logo" />
 
 # perspectiveR
 
