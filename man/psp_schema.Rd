@@ -17,7 +17,7 @@ Requests the schema (column names and types) of the Perspective table.
 The result is delivered asynchronously to \code{input$<outputId>_schema}.
 }
 \examples{
-\dontrun{
+if (interactive()) {
 proxy <- perspectiveProxy(session, "viewer")
 psp_schema(proxy)
 }

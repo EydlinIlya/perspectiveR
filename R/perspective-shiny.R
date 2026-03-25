@@ -32,7 +32,7 @@
 #' @return A Shiny output element.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' library(shiny)
 #' ui <- fluidPage(
 #'   perspectiveOutput("viewer", height = "600px")
@@ -58,7 +58,7 @@ perspectiveOutput <- function(outputId, width = "100%", height = "400px") {
 #' @return A Shiny render function.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' server <- function(input, output) {
 #'   output$viewer <- renderPerspective({
 #'     perspective(mtcars, group_by = "cyl", plugin = "Y Bar")
@@ -88,7 +88,7 @@ renderPerspective <- function(expr, env = parent.frame(), quoted = FALSE) {
 #' @return A proxy object of class \code{"perspective_proxy"}.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' server <- function(input, output, session) {
 #'   output$viewer <- renderPerspective({
 #'     perspective(mtcars)
@@ -120,7 +120,7 @@ perspectiveProxy <- function(session, outputId) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_update(proxy, new_data)
 #' }
@@ -143,7 +143,7 @@ psp_update <- function(proxy, data, use_arrow = FALSE) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_replace(proxy, updated_data)
 #' }
@@ -164,7 +164,7 @@ psp_replace <- function(proxy, data, use_arrow = FALSE) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_clear(proxy)
 #' }
@@ -186,7 +186,7 @@ psp_clear <- function(proxy) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_restore(proxy, list(plugin = "Y Bar", group_by = list("cyl")))
 #' }
@@ -206,7 +206,7 @@ psp_restore <- function(proxy, config) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_reset(proxy)
 #' }
@@ -238,7 +238,7 @@ psp_reset <- function(proxy) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_remove(proxy, keys = c("row1", "row2"))
 #' }
@@ -272,7 +272,7 @@ psp_remove <- function(proxy, keys) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_export(proxy, format = "csv")
 #' }
@@ -312,7 +312,7 @@ psp_export <- function(proxy, format = c("json", "csv", "columns", "arrow"),
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_save(proxy)
 #' }
@@ -338,7 +338,7 @@ psp_save <- function(proxy) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_on_update(proxy)
 #' }
@@ -359,7 +359,7 @@ psp_on_update <- function(proxy, enable = TRUE) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_schema(proxy)
 #' }
@@ -380,7 +380,7 @@ psp_schema <- function(proxy) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_size(proxy)
 #' }
@@ -401,7 +401,7 @@ psp_size <- function(proxy) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_columns(proxy)
 #' }
@@ -424,7 +424,7 @@ psp_columns <- function(proxy) {
 #' @return The proxy object (invisibly), for chaining.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' proxy <- perspectiveProxy(session, "viewer")
 #' psp_validate_expressions(proxy, expressions = c("\"col1\" + \"col2\""))
 #' }

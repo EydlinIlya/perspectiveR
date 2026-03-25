@@ -17,7 +17,7 @@ Requests the number of rows in the Perspective table. The result is
 delivered asynchronously to \code{input$<outputId>_size}.
 }
 \examples{
-\dontrun{
+if (interactive()) {
 proxy <- perspectiveProxy(session, "viewer")
 psp_size(proxy)
 }

@@ -20,7 +20,7 @@ The proxy object (invisibly), for chaining.
 Sends new rows to be appended to the existing Perspective table.
 }
 \examples{
-\dontrun{
+if (interactive()) {
 proxy <- perspectiveProxy(session, "viewer")
 psp_update(proxy, new_data)
 }

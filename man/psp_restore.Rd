@@ -19,7 +19,7 @@ Applies a configuration object to the Perspective viewer, changing columns,
 group_by, split_by, filters, sort, aggregates, plugin, etc.
 }
 \examples{
-\dontrun{
+if (interactive()) {
 proxy <- perspectiveProxy(session, "viewer")
 psp_restore(proxy, list(plugin = "Y Bar", group_by = list("cyl")))
 }

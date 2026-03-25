@@ -16,7 +16,7 @@ The proxy object (invisibly), for chaining.
 Removes all rows from the Perspective table (schema is preserved).
 }
 \examples{
-\dontrun{
+if (interactive()) {
 proxy <- perspectiveProxy(session, "viewer")
 psp_clear(proxy)
 }

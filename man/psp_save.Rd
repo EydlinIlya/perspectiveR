@@ -18,7 +18,7 @@ plugin, etc.). The result is delivered asynchronously to
 \code{input$<outputId>_state}.
 }
 \examples{
-\dontrun{
+if (interactive()) {
 proxy <- perspectiveProxy(session, "viewer")
 psp_save(proxy)
 }

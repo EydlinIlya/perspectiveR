@@ -14,7 +14,7 @@ Description: An 'htmlwidgets' binding for the 'FINOS Perspective'
     group-by/split-by pivoting, filtering, sorting, aggregation, and computed
     expressions. Works in 'RStudio' Viewer, 'R Markdown', 'Quarto', and
     'Shiny' with streaming data updates via proxy interface.
-License: Apache License 2.0 | file LICENSE
+License: Apache License (>= 2)
 URL: https://github.com/EydlinIlya/perspectiveR
 BugReports: https://github.com/EydlinIlya/perspectiveR/issues
 Encoding: UTF-8

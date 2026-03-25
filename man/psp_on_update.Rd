@@ -23,7 +23,7 @@ with a list containing \code{timestamp}, \code{port_id}, and
 programmatic updates).
 }
 \examples{
-\dontrun{
+if (interactive()) {
 proxy <- perspectiveProxy(session, "viewer")
 psp_on_update(proxy)
 }

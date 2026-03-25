@@ -20,7 +20,7 @@ Perspective table. The table must have been created with an \code{index}
 column (see \code{\link{perspective}}).
 }
 \examples{
-\dontrun{
+if (interactive()) {
 proxy <- perspectiveProxy(session, "viewer")
 psp_remove(proxy, keys = c("row1", "row2"))
 }

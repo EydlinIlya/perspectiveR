@@ -20,7 +20,7 @@ applying them. The result is delivered asynchronously to
 \code{input$<outputId>_validate_expressions}.
 }
 \examples{
-\dontrun{
+if (interactive()) {
 proxy <- perspectiveProxy(session, "viewer")
 psp_validate_expressions(proxy, expressions = c("\"col1\" + \"col2\""))
 }

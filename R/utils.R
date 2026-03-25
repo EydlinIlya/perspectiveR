@@ -12,12 +12,16 @@ NULL
 #'   available examples.
 #' @param ... Additional arguments passed to \code{\link[shiny]{runApp}}.
 #'
+#' @return If \code{example} is \code{NULL}, a character vector of available
+#'   example names (invisibly). Otherwise, no return value; called for the side
+#'   effect of launching a Shiny app.
+#'
 #' @examples
 #' # List available examples
 #' run_example()
 #'
 #' # Launch the demo app
-#' \dontrun{
+#' if (interactive()) {
 #' run_example("shiny-basic")
 #' }
 #'

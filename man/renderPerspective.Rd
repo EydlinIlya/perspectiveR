@@ -20,7 +20,7 @@ A Shiny render function.
 Server-side rendering function for the Perspective widget.
 }
 \examples{
-\dontrun{
+if (interactive()) {
 server <- function(input, output) {
   output$viewer <- renderPerspective({
     perspective(mtcars, group_by = "cyl", plugin = "Y Bar")

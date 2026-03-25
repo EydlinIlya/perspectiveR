@@ -43,7 +43,7 @@ results (after \code{\link{psp_validate_expressions}}).}
 }
 }
 \examples{
-\dontrun{
+if (interactive()) {
 library(shiny)
 ui <- fluidPage(
   perspectiveOutput("viewer", height = "600px")

@@ -21,7 +21,7 @@ viewer in a Shiny app without re-rendering the entire widget. Use this with
 and \code{psp_reset} to modify the viewer.
 }
 \examples{
-\dontrun{
+if (interactive()) {
 server <- function(input, output, session) {
   output$viewer <- renderPerspective({
     perspective(mtcars)
