@@ -3,6 +3,7 @@
 # perspectiveR
 
 <!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/perspectiveR)](https://CRAN.R-project.org/package=perspectiveR)
 [![R-CMD-check](https://github.com/EydlinIlya/perspectiveR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EydlinIlya/perspectiveR/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/EydlinIlya/perspectiveR/graph/badge.svg)](https://app.codecov.io/gh/EydlinIlya/perspectiveR)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -13,14 +14,11 @@ R htmlwidgets binding for the [FINOS Perspective](https://perspective-dev.github
 ## Installation
 
 ```r
-# Install from GitHub
+# Install from CRAN
+install.packages("perspectiveR")
+
+# Or install the development version from GitHub
 remotes::install_github("EydlinIlya/perspectiveR")
-
-# Or using pak
-pak::pak("EydlinIlya/perspectiveR")
-
-# Or using devtools
-devtools::install_github("EydlinIlya/perspectiveR")
 ```
 
 ## Quick Start
@@ -51,6 +49,125 @@ perspective(iris,
 - **Filter operator**: Combine multiple filters with `filter_op = "and"` or `filter_op = "or"`
 - **Arrow IPC support**: Optional `arrow` package integration for efficient serialization of large datasets
 - **Works everywhere**: RStudio Viewer, R Markdown, Quarto, and Shiny
+
+## Examples
+
+### Pivot tables with aggregation
+
+Summarize data by grouping rows and splitting columns, with custom aggregates:
+
+```r
+# Average horsepower by cylinders and transmission type
+perspective(mtcars,
+  columns    = c("hp", "mpg", "wt"),
+  group_by   = "cyl",
+  split_by   = "am",
+  aggregates = list(hp = "avg", mpg = "avg", wt = "sum"),
+  plugin     = "Datagrid"
+)
+```
+
+### Sorting
+
+Sort by one or more columns, including absolute-value sorts for financial data:
+
+```r
+# Sort airquality by Ozone descending, then Temp ascending
+perspective(airquality,
+  sort   = list(c("Ozone", "desc"), c("Temp", "asc")),
+  filter = list(c("Ozone", "is not null"))
+)
+```
+
+### Multiple filters with filter_op
+
+Combine filters with `"and"` (default) or `"or"`:
+
+```r
+# Cars that are either very efficient OR very powerful
+perspective(mtcars,
+  columns   = c("mpg", "hp", "cyl", "wt"),
+  filter    = list(c("mpg", ">", 30), c("hp", ">", 200)),
+  filter_op = "or",
+  sort      = list(c("mpg", "desc"))
+)
+```
+
+### Computed expressions
+
+Create derived columns using Perspective's expression language:
+
+```r
+# Compute power-to-weight ratio and bin it
+perspective(mtcars,
+  expressions = c(
+    '"hp_per_ton" = "hp" / ("wt" * 1000)',
+    '"efficiency" = if ("mpg" > 25) { "high" } else { "low" }'
+  ),
+  columns  = c("hp", "wt", "mpg", "hp_per_ton", "efficiency"),
+  group_by = "efficiency",
+  plugin   = "Y Bar"
+)
+```
+
+### Chart types
+
+Perspective supports a wide range of chart types:
+
+```r
+# Line chart — time series
+perspective(EuStockMarkets,
+  plugin = "Y Line",
+  title  = "European Stock Indices"
+)
+
+# Heatmap — correlation-style view
+perspective(mtcars,
+  group_by = "cyl",
+  split_by = "gear",
+  columns  = c("mpg", "hp", "wt"),
+  plugin   = "Heatmap"
+)
+
+# Sunburst — hierarchical breakdown
+perspective(mtcars,
+  group_by = c("cyl", "gear", "am"),
+  columns  = "mpg",
+  plugin   = "Sunburst"
+)
+```
+
+### Themes
+
+Nine built-in themes for light and dark environments:
+
+```r
+# Dark mode with Monokai theme
+perspective(iris,
+  plugin = "Y Scatter",
+  theme  = "Monokai",
+  title  = "Iris Measurements"
+)
+
+# Available themes: "Pro Light" (default), "Pro Dark", "Monokai",
+# "Solarized Light", "Solarized Dark", "Vaporwave", "Dracula",
+# "Gruvbox", "Gruvbox Dark"
+```
+
+### Editable datagrid
+
+Enable inline editing for manual data entry or corrections:
+
+```r
+perspective(data.frame(
+    Task   = c("Review PR", "Write tests", "Deploy"),
+    Status = c("Done", "In Progress", "Pending"),
+    Owner  = c("Alice", "Bob", "Carol")
+  ),
+  editable = TRUE,
+  title    = "Task Tracker"
+)
+```
 
 ## Shiny Demos
 
