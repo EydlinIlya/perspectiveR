@@ -1,9 +1,0 @@
-bibentry(
-  bibtype  = "Manual",
-  title    = "perspectiveR: Interactive Pivot Tables and Visualizations with 'Perspective'",
-  author   = person("Eli", "Eydlin"),
-  year     = "2025",
-  note     = "R package version 0.3.1",
-  url      = "https://CRAN.R-project.org/package=perspectiveR",
-  doi      = "10.32614/CRAN.package.perspectiveR"
-)
