@@ -270,9 +270,17 @@ HTMLWidgets.widget({
           if (x.config.title !== undefined && x.config.title !== null)
             config.title = x.config.title;
 
+          // Include theme in restore config so it applies atomically
+          // with the plugin — setting it separately via setAttribute
+          // after restore causes the plugin to render with default colors
+          // before the theme CSS takes effect.
+          if (x.theme) config.theme = x.theme;
+
           if (Object.keys(config).length > 0) {
             await viewer.restore(config);
           }
+        } else if (x.theme) {
+          await viewer.restore({ theme: x.theme });
         }
 
         // Settings panel visibility
@@ -286,11 +294,6 @@ HTMLWidgets.widget({
         // Editable mode
         if (x.config && x.config.editable) {
           viewer.setAttribute("editable", "");
-        }
-
-        // Apply theme via attribute
-        if (x.theme) {
-          viewer.setAttribute("theme", x.theme);
         }
 
         // ---- Shiny event forwarding ----

@@ -1,3 +1,10 @@
+# perspectiveR 0.3.1
+
+* Fixed theme initialization: themes now apply atomically with the plugin
+  via `restore()`, preventing a flash of default colors on first render.
+* Added pkgdown site with interactive article.
+* Resized logo.
+
 # perspectiveR 0.3.0
 
 * Added `psp_schema()`, `psp_size()`, `psp_columns()`, and
@@ -26,7 +33,7 @@
 * `perspective()` widget with support for multiple chart types.
 * Shiny integration via `perspectiveOutput()`, `renderPerspective()`, and
   `perspectiveProxy()`.
-* Proxy functions: `psp_update()`, `psp_replace()`, `psp_clear()`,
+* Proxy functions: `psp_update()`, `psp_replace()`no, `psp_clear()`,
   `psp_restore()`, and `psp_reset()`.
 * Arrow IPC serialization for high-performance data transfer.
 * Bundled Shiny demo app with `run_example()`.

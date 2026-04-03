@@ -23,3 +23,14 @@ Thumbs.db
 /Meta/
 inst/doc/
 cran-comments.md
+
+# pkgdown site (built, not tracked)
+docs/
+
+# Build check artifacts
+*.Rcheck/
+*.tar.gz
+
+# Quarto post output
+rweekly_post.html
+rweekly_post_files/

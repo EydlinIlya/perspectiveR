@@ -110,6 +110,36 @@ perspective(mtcars,
 )
 ```
 
+### 3D rendering with expressions
+
+Render a 3D torus entirely in Perspective's expression engine — only the
+parametric angles come from R, while all geometry and shading math runs in
+WebAssembly (a hat-tip to the classic
+[donut.c](https://www.a1k0n.net/2011/07/20/donut-math.html)):
+
+```r
+# 3D donut — geometry computed in Perspective's expression engine
+torus <- expand.grid(
+  u = seq(0, 2 * pi, length.out = 80),
+  v = seq(0, 2 * pi, length.out = 80)
+)
+
+perspective(torus,
+  expressions = c(
+    '"x" = (2 + cos("v")) * cos("u")',
+    '"y" = (2 + cos("v")) * sin("u")',
+    '"shade" = cos("v") * sin("u") + sin("v")'
+  ),
+  columns  = c("x", "y", "shade"),
+  plugin   = "XY Scatter",
+  theme    = "Pro Dark",
+  settings = FALSE,
+  title    = "Donut"
+)
+```
+
+Add streaming rotation in Shiny — see `run_example("spinning-donut")`.
+
 ### Chart types
 
 Perspective supports a wide range of chart types:
@@ -171,17 +201,19 @@ perspective(data.frame(
 
 ## Shiny Demos
 
-Two interactive demos are bundled with the package:
+Three interactive demos are bundled with the package:
 
 ```r
 library(perspectiveR)
 run_example()             # list all available demos
 run_example("shiny-basic")
 run_example("crud-table")
+run_example("spinning-donut")
 ```
 
 - **shiny-basic** — Streaming stock market line chart (DAX, SMI, CAC, FTSE 1991-1998) with a 100-row sliding window, Arrow IPC toggle, computed columns, and named state save/restore.
 - **crud-table** — Editable indexed CRUD table with click events, add/update/delete rows by key, downloadable CSV/JSON export, and an update activity log.
+- **spinning-donut** — Animated 3D torus with all geometry computed in Perspective's expression engine and rotation driven by streaming data updates.
 
 ### Shiny Usage
 

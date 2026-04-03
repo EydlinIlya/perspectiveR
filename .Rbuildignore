@@ -20,3 +20,10 @@
 ^\.playwright-mcp/.*$
 ^doc$
 ^Meta$
+^donut_demo\.R$
+^rweekly_post\.qmd$
+^rweekly_post\.html$
+^rweekly_post_files$
+^perspectiveR\.Rcheck$
+^\.Rcheck$
+^perspectiveR_.*\.tar\.gz$

@@ -225,15 +225,29 @@ perspective <- function(data,
 
 #' Build expressions object for Perspective
 #'
-#' Perspective expects expressions as an object mapping expression names
-#' to expression strings.
+#' Perspective expects expressions as an object mapping column names
+#' to expression strings, e.g. \code{list(col_name = "expr_body")}.
+#'
+#' Accepts either a named character vector (names = column names, values =
+#' expression bodies) or an unnamed vector where each element uses the
+#' \code{"col_name" = expr_body} assignment syntax.
 #' @param exprs Character vector of expression strings.
 #' @return A named list suitable for Perspective's expressions config.
 #' @noRd
 .build_expressions <- function(exprs) {
-  # Perspective v2+ uses a named object: { "expr_name": "expr_string" }
-  # Use the expression string as both key and value
-  result <- as.list(exprs)
-  names(result) <- exprs
+  # Already a named vector: use names as column names, values as bodies
+  if (!is.null(names(exprs)) && all(nzchar(names(exprs)))) {
+    return(as.list(exprs))
+  }
+  # Parse '"col_name" = body' assignment syntax
+  result <- list()
+  for (expr in exprs) {
+    m <- regmatches(expr, regexec('^"([^"]+)"\\s*=\\s*(.+)$', expr))[[1]]
+    if (length(m) == 3L) {
+      result[[m[2L]]] <- m[3L]
+    } else {
+      result[[expr]] <- expr
+    }
+  }
   result
 }
