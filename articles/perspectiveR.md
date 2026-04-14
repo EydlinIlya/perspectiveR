@@ -40,11 +40,10 @@ library(perspectiveR)
 perspective(mtcars, height = "700px")
 ```
 
-That’s it. Click the hamburger icon (top-left) to open the settings
-panel. From there you can drag columns into **Group By**, **Split By**,
-add filters, change sort order, switch between 11 chart types, and pick
-a theme. The R code sets a starting point — the viewer is yours to play
-with.
+That’s it. Take a look at the settings panel (top-right). From there you
+can drag columns into **Group By**, **Split By**, add filters, change
+sort order, switch between 11 chart types, and pick a theme. The R code
+sets a starting point — the viewer is yours to play with.
 
 ## Combining Features
 
